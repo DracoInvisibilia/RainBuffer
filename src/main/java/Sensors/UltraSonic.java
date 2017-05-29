@@ -23,23 +23,31 @@ public class UltraSonic implements Sensor {
     }
 
     public void getSingleReading() {
+        System.out.println("Starting single reading...");
         long pulseStart = 0;
         long pulseEnd = 0;
         long pulseWidth = 0;
         double distance = 0;
         try {
+            System.out.println("Setting up pins and settle sensor...");
             trigPin.low();
             TimeUnit.MICROSECONDS.sleep(2);
+
+            System.out.println("Setting and settling done! Send pulse...");
             trigPin.high();
             TimeUnit.MICROSECONDS.sleep(10);
             trigPin.low();
 
+            System.out.println("Sending pulse done! Waiting for response...");
             while(echoPin.isLow())
                 pulseStart = System.currentTimeMillis();
 
+            System.out.println("Got response! Measuring pulse width...");
             while(echoPin.isHigh())
                 pulseEnd = System.currentTimeMillis();
 
+
+            System.out.println("Calculating pulse width...");
             pulseWidth = pulseEnd - pulseStart;
 
             distance = getDistance(pulseWidth);
@@ -63,6 +71,7 @@ public class UltraSonic implements Sensor {
     }
 
     public void getContReading(int interval) {
+        System.out.println("Starting continuous reading...");
         try {
             while(true) {
                 getSingleReading();

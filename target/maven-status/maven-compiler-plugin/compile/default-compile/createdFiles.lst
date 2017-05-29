@@ -1,3 +1,5 @@
+Buffers\Buffer.class
 Sensors\UltraSonic.class
+Buffers\Box.class
 RainBuffer.class
 Sensors\Sensor.class
