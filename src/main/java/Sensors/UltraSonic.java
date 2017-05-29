@@ -95,7 +95,7 @@ public class UltraSonic implements Sensor {
         System.out.println("Starting continuous reading...");
         long pulseStart = 0;
         long pulseEnd = 0;
-        long pulseWidth = 0;
+        double pulseWidth = 0;
         double distance = 0;
         try {
             System.out.println("Setting up pins and settle sensor...");
@@ -127,7 +127,7 @@ public class UltraSonic implements Sensor {
         }
     }
 
-    public double getDistance(long pulseWidth) {
+    public double getDistance(double pulseWidth) {
         double distance = pulseWidth*165.7;
         return (distance < 0 || distance > 500) ? -1 : distance;
     }
