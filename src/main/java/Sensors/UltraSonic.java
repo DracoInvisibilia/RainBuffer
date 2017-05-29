@@ -108,10 +108,10 @@ public class UltraSonic implements Sensor {
                 trigPin.low();
 
                 while(echoPin.isLow())
-                    pulseStart = System.currentTimeMillis();
+                    pulseStart = System.nanoTime();
 
                 while(echoPin.isHigh())
-                    pulseEnd = System.currentTimeMillis();
+                    pulseEnd = System.nanoTime();
 
                 pulseWidth = (pulseEnd - pulseStart);
 
