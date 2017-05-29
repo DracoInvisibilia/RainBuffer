@@ -33,10 +33,10 @@ public class UltraSonic implements Sensor {
             trigPin.low();
             TimeUnit.MILLISECONDS.sleep(2);
 
-            System.out.println("Setting and settling done! Send pulse... (Millichanged)");
+            System.out.println("Setting and settling done! Send pulse...");
             trigPin.high();
             System.out.println("Trigger is high: " + trigPin.isHigh());
-            TimeUnit.MILLISECONDS.sleep(10);
+            TimeUnit.MINUTES.sleep(10);
             trigPin.low();
             System.out.println("Trigger is high: " + trigPin.isHigh());
 
