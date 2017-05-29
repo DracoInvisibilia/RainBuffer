@@ -3,6 +3,7 @@ import Buffers.Buffer;
 import Managers.SensorManager;
 import Managers.WeatherManager;
 
+import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +15,7 @@ public class SmartBuffer {
     Buffer buffer;
     SensorManager sManager;
     WeatherManager wManager;
+    private Calendar cal;
 
 
     public SmartBuffer(String name) {
@@ -25,13 +27,15 @@ public class SmartBuffer {
         System.out.println("Initializing Smart Buffer...");
         buffer = new Barrel(10);
         sManager = new SensorManager();
-        wManager = new WeatherManager();
+        wManager = new WeatherManager(5);
     }
 
     public void startSmartness() {
         System.out.println("Starting the smartness...");
         try {
             while(true) { // Smart loop
+                cal = Calendar.getInstance();
+
                 Map<String, Double> sVals = sManager.pull();
                 for (Map.Entry<String, Double> entry : sVals.entrySet()) {
                     String eName = entry.getKey();
@@ -39,11 +43,13 @@ public class SmartBuffer {
                     System.out.println(eName + ": " + buffer.getContent(eVal,0));
                 }
 
-                Map<String, String> wVals = wManager.pull();
-                for (Map.Entry<String, String> entry : wVals.entrySet()) {
-                    String eName = entry.getKey();
-                    String eVal = entry.getValue();
-                    System.out.println(eName + ": " + eVal);
+                if(cal.getTime().after(wManager.getNextUpdate())) {
+                    Map<String, Map<String, Double>> wVals = wManager.pull();
+                    for (Map.Entry<String, Map<String, Double>> entry : wVals.entrySet()) {
+                        String eName = entry.getKey();
+                        Map<String, Double> eVal = entry.getValue();
+                        System.out.println(eName + ": " + eVal.toString());
+                    }
                 }
 
                 TimeUnit.SECONDS.sleep(1);
