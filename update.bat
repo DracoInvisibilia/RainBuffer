@@ -6,5 +6,5 @@ git add -A
 ECHO Commiting files to git...
 git commit -m %1
 ECHO Pushing files to git...
-git push -u master origin
+git push -u origin master
 PAUSE
