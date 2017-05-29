@@ -115,6 +115,8 @@ public class UltraSonic implements Sensor {
 
                 pulseWidth = (pulseEnd - pulseStart)/1000;
 
+                System.out.println("pulseStart, pulseEnd, pulseWidth --> " + pulseStart + ", " + pulseEnd + ", " + pulseWidth);
+
                 distance = getDistance(pulseWidth);
 
                 System.out.println("Distance: " + distance);
@@ -127,6 +129,6 @@ public class UltraSonic implements Sensor {
 
     public double getDistance(long pulseWidth) {
         double distance = pulseWidth*165.7;
-        return (distance < 0 || distance > 500) ? distance : -1;
+        return (distance < 0 || distance > 500) ? -1 : distance;
     }
 }
