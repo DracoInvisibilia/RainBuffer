@@ -19,7 +19,7 @@ public class SensorManager {
         allSensors.add(new UltraSonic("WATER_LEVEL"));
     }
 
-    public Map<String, Double> pullSensors() {
+    public Map<String, Double> pull() {
         Map<String, Double> pulledVals = new HashMap<String, Double>();
         for (Sensor cSensor: allSensors) {
             pulledVals.put(cSensor.getName(), cSensor.getSingleReading());

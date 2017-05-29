@@ -2,9 +2,11 @@ Actuators\Actuator.class
 Managers\ConnectionManager.class
 Managers\ActuatorManager.class
 main.class
+Weather\Weather.class
 Buffers\Barrel.class
 Buffers\Buffer.class
 Buffers\Box.class
+Weather\Buienradar.class
 Sensors\Sensor.class
 Actuators\Valve.class
 Managers\SensorManager.class
