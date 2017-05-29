@@ -14,8 +14,8 @@ public class UltraSonic implements Sensor {
     public UltraSonic() {
         System.out.println("Setting up UltraSonic sensor...");
         gpio = GpioFactory.getInstance();
-        trigPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, PinState.LOW);
-        echoPin = gpio.provisionDigitalInputPin(RaspiPin.GPIO_03);
+        trigPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_08, PinState.LOW);
+        echoPin = gpio.provisionDigitalInputPin(RaspiPin.GPIO_09);
         if(!gpio.isShutdown())
             System.out.println("Setup UltraSonic... done.");
         else
