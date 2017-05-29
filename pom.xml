@@ -16,7 +16,7 @@
                 <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>RainBuffer</mainClass>
+                        <mainClass>main</mainClass>
                     </manifest>
                 </archive>
                 <descriptorRefs>
@@ -40,7 +40,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>RainBuffer</mainClass>
+                            <mainClass>main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

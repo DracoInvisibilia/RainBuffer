@@ -1,5 +1,15 @@
+Actuators\Actuator.class
+Managers\ConnectionManager.class
+Managers\ActuatorManager.class
+main.class
+Buffers\Barrel.class
 Buffers\Buffer.class
-Sensors\UltraSonic.class
 Buffers\Box.class
-RainBuffer.class
 Sensors\Sensor.class
+Actuators\Valve.class
+Managers\SensorManager.class
+Sensors\WaterFlow.class
+Managers\WeatherManager.class
+Sensors\UltraSonic.class
+SmartBuffer.class
+Sensors\Temperature.class
