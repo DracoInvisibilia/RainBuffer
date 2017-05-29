@@ -35,11 +35,14 @@ public class UltraSonic implements Sensor {
 
             System.out.println("Setting and settling done! Send pulse... (Millichanged)");
             trigPin.high();
+            System.out.println("Trigger is high: " + trigPin.isHigh());
             TimeUnit.MILLISECONDS.sleep(10);
             trigPin.low();
+            System.out.println("Trigger is high: " + trigPin.isHigh());
 
             System.out.println("Sending pulse done! Waiting for response...");
             while(echoPin.isLow())
+                System.out.println("Echo pin is: " + echoPin.isLow());
                 pulseStart = System.currentTimeMillis();
 
             System.out.println("Got response! Measuring pulse width...");
