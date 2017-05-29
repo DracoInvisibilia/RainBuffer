@@ -113,7 +113,7 @@ public class UltraSonic implements Sensor {
                 while(echoPin.isHigh())
                     pulseEnd = System.nanoTime();
 
-                pulseWidth = (pulseEnd - pulseStart);
+                pulseWidth = (pulseEnd - pulseStart)/1000000;
 
                 System.out.println("pulseStart, pulseEnd, pulseWidth --> " + pulseStart + ", " + pulseEnd + ", " + pulseWidth);
 
