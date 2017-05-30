@@ -23,8 +23,11 @@ public class WeatherManager {
 
     public Map<String, Map<String, Double>> pull() {
         Map<String, Map<String, Double>> pulledVals = new HashMap<String, Map<String, Double>>();
-        for (Weather cWeather: allWeather) {
-            pulledVals.put(cWeather.getName(), cWeather.getUpdate());
+        for (Weather cWeather : allWeather) {
+            Map<String, Double> update = cWeather.getUpdate();
+            if (update != null) {
+                pulledVals.put(cWeather.getName(), update);
+            }
         }
         cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, updateFrequency);

@@ -21,9 +21,11 @@ public class Buienradar implements Weather {
     }
 
     public Map<String, Double> getUpdate() {
-        Map<String, Double> predictionData;
+        Map<String, Double> predictionData = null;
         String update = getRaw();
-        predictionData = parseStoStd(update);
+        if (!update.isEmpty()) {
+            predictionData = parseStoStd(update);
+        }
         return predictionData;
     }
 
@@ -32,7 +34,7 @@ public class Buienradar implements Weather {
         try {
             String bRadarString = "http://gpsgadget.buienradar.nl/data/raintext?lat=" + lat + "&lon=" + lon;
             URL bRadarGPS = new URL(bRadarString);
-            update = Jsoup.parse(bRadarGPS,1000).body().text();
+            update = Jsoup.parse(bRadarGPS, 1000).body().text();
             parseStoStd(update);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -54,7 +56,7 @@ public class Buienradar implements Weather {
     }
 
     private double calculatePrecipitation(int value) {
-        return Math.pow(10, (value-109)/32);
+        return Math.pow(10, (value - 109) / 32);
     }
 
     public String getName() {
