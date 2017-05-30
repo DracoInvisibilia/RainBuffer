@@ -25,12 +25,12 @@ public class SmartBuffer {
 
     public void initialize() {
         System.out.println("Initializing Smart Buffer...");
-        buffer = new Barrel(10);
+        buffer = new Barrel(10,100);
         sManager = new SensorManager();
         wManager = new WeatherManager(5);
     }
 
-    public boolean predictPrecipation(Map<String, Map<String, Double>> weatherForecasts) {
+    public boolean predictPrecipitation(Map<String, Map<String, Double>> weatherForecasts) {
         for (Map.Entry<String, Map<String, Double>> weatherStation : weatherForecasts.entrySet()) {
             Map<String, Double> forecasts = weatherStation.getValue();
             for (Map.Entry<String, Double> forecast : forecasts.entrySet()) {
@@ -40,7 +40,7 @@ public class SmartBuffer {
         return false;
     }
 
-    public double estimatePrecipation(Map<String, Map<String, Double>> weatherForecasts) {
+    public double estimatePrecipitation(Map<String, Map<String, Double>> weatherForecasts) {
         double[] percipations = new double[weatherForecasts.keySet().size()];
         return 0.00;
     }
@@ -64,7 +64,7 @@ public class SmartBuffer {
                         Map<String, Double> eVal = entry.getValue();
                         System.out.println(eName + ": " + eVal);
                     }
-                    if(predictPrecipation(wVals)) {
+                    if(predictPrecipitation(wVals)) {
                         System.out.println("There will be rain! :(");
                     }
                 }

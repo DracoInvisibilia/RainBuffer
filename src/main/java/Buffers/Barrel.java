@@ -9,14 +9,17 @@ import Sensors.Sensor;
 public class Barrel implements Buffer {
     double radius = 0;
     double area = 0;
+    double height = 0;
 
-    public Barrel(double radius) {
+    public Barrel(double radius, double height) {
         this.radius = radius;
+        this.height = height;
         this.area = Math.PI*Math.pow(radius, 2);
     }
 
-    public Barrel(double radius, Sensor sensor) {
+    public Barrel(double radius, double height, Sensor sensor) {
         this.radius = radius;
+        this.height = height;
         this.area = Math.PI*Math.pow(radius, 2);
     }
 
@@ -24,7 +27,7 @@ public class Barrel implements Buffer {
         return  this.area;
     }
 
-    public double getContent(double height, int accuracy) {
-        return Math.round((this.area*height*Math.pow(10,accuracy))/1000)/Math.pow(10,accuracy);
+    public double getContent(double emptyHeight, int accuracy) {
+        return Math.round(this.area*this.height*Math.pow(10,accuracy))-Math.round((this.area*emptyHeight*Math.pow(10,accuracy))/1000)/Math.pow(10,accuracy);
     }
 }
