@@ -28,7 +28,14 @@ public class Barrel implements Buffer {
     }
 
     public double getContent(double emptyHeight, int accuracy) {
-        return emptyHeight;
+        System.out.println("emptyHeight: " + emptyHeight);
+        System.out.println("Height: " + this.height);
+        System.out.println("Area: " + this.area);
+        System.out.println("Max Content: " + this.area*this.height);
+        System.out.println("Empty content: " + this.area*emptyHeight);
+        System.out.println("Height-emptyHeight: " + (this.height-emptyHeight));
+        System.out.println("Filled content: " + (this.height-emptyHeight)*this.area);
+        return (this.height-emptyHeight);
         //return this.area*(this.height-emptyHeight)/1000;
         //return Math.round(this.area*this.height*Math.pow(10,accuracy))-Math.round((this.area*emptyHeight*Math.pow(10,accuracy))/1000)/Math.pow(10,accuracy);
     }
