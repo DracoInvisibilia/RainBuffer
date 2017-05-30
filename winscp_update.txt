@@ -1,0 +1,7 @@
+open sftp://pi:RainBuffer123!@192.168.137.89 -hostkey="ssh-ed25519 256 3c:3d:1e:51:28:51:22:25:44:83:68:53:16:39:76:cd"
+cd RainBuffer/Java/Jar
+option transfer automatic
+mv RainBuffer-DEV-jar-with-dependencies.jar old/RainBuffer-DEV-jar-with-dependencies_%TIMESTAMP#ddmmyyyyhhnnss%.jar
+put target\RainBuffer-DEV-jar-with-dependencies.jar
+close
+exit

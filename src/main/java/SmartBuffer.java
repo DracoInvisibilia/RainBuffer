@@ -19,7 +19,7 @@ public class SmartBuffer {
 
 
     public SmartBuffer(String name) {
-        System.out.println("Creating Smart Buffer...");
+        System.out.println("Creating Smart Buffer...:)");
         this.name = name;
     }
 
@@ -35,7 +35,6 @@ public class SmartBuffer {
         try {
             while(true) { // Smart loop
                 cal = Calendar.getInstance();
-
                 Map<String, Double> sVals = sManager.pull();
                 for (Map.Entry<String, Double> entry : sVals.entrySet()) {
                     String eName = entry.getKey();
@@ -48,7 +47,7 @@ public class SmartBuffer {
                     for (Map.Entry<String, Map<String, Double>> entry : wVals.entrySet()) {
                         String eName = entry.getKey();
                         Map<String, Double> eVal = entry.getValue();
-                        System.out.println(eName + ": " + eVal.toString());
+                        System.out.println(eName + ": " + eVal);
                     }
                 }
 
