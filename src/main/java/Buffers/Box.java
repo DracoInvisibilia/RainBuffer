@@ -38,7 +38,7 @@ public class Box implements Buffer {
     }
 
     public double getContent(double emptyHeight, int accuracy) {
-        return this.area*(this.height-emptyHeight);
+        return this.area*(this.height-emptyHeight)/1000;
         //return Math.round(this.area*this.height*Math.pow(10,accuracy))-Math.round((this.area*emptyHeight*Math.pow(10,accuracy))/1000)/Math.pow(10,accuracy);
     }
 
