@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c2163735-f842-4f6a-b962-cbc379f374d2" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/Sensors/Sensor.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/Sensors/UltraSonic.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/RainBuffer-DEV-jar-with-dependencies.jar" afterPath="$PROJECT_DIR$/target/RainBuffer-DEV-jar-with-dependencies.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/RainBuffer-DEV.jar" afterPath="$PROJECT_DIR$/target/RainBuffer-DEV.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/SmartBuffer.class" afterPath="$PROJECT_DIR$/target/classes/SmartBuffer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/SmartBuffer.java" afterPath="$PROJECT_DIR$/src/main/java/SmartBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/update.bat" afterPath="$PROJECT_DIR$/update.bat" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -26,8 +19,8 @@
       <file leaf-file-name="SmartBuffer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/SmartBuffer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="55" lean-forward="false" selection-start-line="21" selection-start-column="55" selection-end-line="21" selection-end-column="55" />
+            <state relative-caret-position="300">
+              <caret line="43" column="77" lean-forward="true" selection-start-line="43" selection-start-column="77" selection-end-line="43" selection-end-column="77" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -1071,8 +1064,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/SmartBuffer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="55" lean-forward="false" selection-start-line="21" selection-start-column="55" selection-end-line="21" selection-end-column="55" />
+        <state relative-caret-position="300">
+          <caret line="43" column="77" lean-forward="true" selection-start-line="43" selection-start-column="77" selection-end-line="43" selection-end-column="77" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
