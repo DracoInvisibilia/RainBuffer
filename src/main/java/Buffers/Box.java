@@ -15,7 +15,6 @@ public class Box implements Buffer {
     double width = 0;
     double area = 0;
     double height = 0;
-    double content = 0;
     SensorManager sManager;
 
     public Box(int length, int width, int height) {
@@ -23,7 +22,6 @@ public class Box implements Buffer {
         this.width = width;
         this.height = height;
         this.area = this.length*this.width;
-        this.content = this.area*this.height;
         this.sManager = new SensorManager();
     }
 
@@ -38,8 +36,7 @@ public class Box implements Buffer {
     }
 
     public double getContent(double emptyHeight, int accuracy) {
-        return this.area*(this.height-emptyHeight)/1000;
-        //return Math.round(this.area*this.height*Math.pow(10,accuracy))-Math.round((this.area*emptyHeight*Math.pow(10,accuracy))/1000)/Math.pow(10,accuracy);
+        return Math.round((this.height-emptyHeight)*this.area)/1000*Math.pow(10,accuracy)/Math.pow(10,accuracy);
     }
 
 }
