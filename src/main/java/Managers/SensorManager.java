@@ -16,7 +16,7 @@ public class SensorManager {
 
     public SensorManager() {
         allSensors = new ArrayList<Sensor>();
-        allSensors.add(new UltraSonic("WATER_LEVEL"));
+        allSensors.add(new UltraSonic("WATER_LEVEL (in L)"));
     }
 
     public Map<String, Double> pull() {
