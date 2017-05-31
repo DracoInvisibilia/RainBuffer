@@ -68,7 +68,6 @@ public class UltraSonic implements Sensor {
             }
             if (timeout) {
                 System.out.println("UltraSonic timed out!");
-                return distance;
             } else {
                 pulseWidth = pulseEnd - pulseStart;
                 distance = getDistance(pulseWidth);
