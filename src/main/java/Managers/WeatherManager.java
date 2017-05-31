@@ -21,10 +21,10 @@ public class WeatherManager {
         nextUpdate = Calendar.getInstance().getTime();
     }
 
-    public Map<String, Map<String, Double>> pull() {
-        Map<String, Map<String, Double>> pulledVals = new HashMap<String, Map<String, Double>>();
+    public Map<String, Map<Date, Double>> pull() {
+        Map<String, Map<Date, Double>> pulledVals = new HashMap<String, Map<Date, Double>>();
         for (Weather cWeather : allWeather) {
-            Map<String, Double> update = cWeather.getUpdate();
+            Map<Date, Double> update = cWeather.getUpdate();
             if (update != null) {
                 pulledVals.put(cWeather.getName(), update);
             }

@@ -4,6 +4,7 @@ import Managers.SensorManager;
 import Managers.WeatherManager;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,10 +31,10 @@ public class SmartBuffer {
         wManager = new WeatherManager(5);
     }
 
-    public boolean predictPrecipitation(Map<String, Map<String, Double>> weatherForecasts) {
-        for (Map.Entry<String, Map<String, Double>> weatherStation : weatherForecasts.entrySet()) {
-            Map<String, Double> forecasts = weatherStation.getValue();
-            for (Map.Entry<String, Double> forecast : forecasts.entrySet()) {
+    public boolean predictPrecipitation(Map<String, Map<Date, Double>> weatherForecasts) {
+        for (Map.Entry<String, Map<Date, Double>> weatherStation : weatherForecasts.entrySet()) {
+            Map<Date, Double> forecasts = weatherStation.getValue();
+            for (Map.Entry<Date, Double> forecast : forecasts.entrySet()) {
                 if (forecast.getValue()>0.001) return true;
             }
         }
@@ -58,10 +59,11 @@ public class SmartBuffer {
                 }
 
                 if(cal.getTime().after(wManager.getNextUpdate())) {
-                    Map<String, Map<String, Double>> wVals = wManager.pull();
-                    for (Map.Entry<String, Map<String, Double>> entry : wVals.entrySet()) {
+                    System.out.println("Pull \"Weather Manager\"");
+                    Map<String, Map<Date, Double>> wVals = wManager.pull();
+                    for (Map.Entry<String, Map<Date, Double>> entry : wVals.entrySet()) {
                         String eName = entry.getKey();
-                        Map<String, Double> eVal = entry.getValue();
+                        Map<Date, Double> eVal = entry.getValue();
                         System.out.println(eName + ": " + eVal);
                     }
                     if(predictPrecipitation(wVals)) {
