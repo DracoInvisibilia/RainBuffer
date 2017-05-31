@@ -45,7 +45,7 @@ public class UltraSonic implements Sensor {
             trigPin.low();
             long startTime = System.currentTimeMillis();
             boolean timeout = false;
-            for (int a = 1; a <= attempts; a++) {
+            for (int a = 1; a <= attempts && !timeout; a++) {
                 timeout = false;
                 System.out.println("UltraSonic: attempt " + a + " out of " + attempts);
                 while (!timeout && echoPin.isLow()) {
