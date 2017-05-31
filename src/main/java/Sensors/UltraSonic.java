@@ -13,6 +13,9 @@ public class UltraSonic implements Sensor {
     GpioController gpio = null;
     boolean setup = false;
     String name = null;
+    int t_out = 5000;
+    int attempts = 10;
+    double distance = 0;
 
     public UltraSonic(String name) {
         System.out.println("Setting up UltraSonic sensor...");
@@ -29,8 +32,7 @@ public class UltraSonic implements Sensor {
     public double getSingleReading() {
         long pulseStart = 0;
         long pulseEnd = 0;
-        long pulseWidth = 0;
-        double distance = 0;
+        long pulseWidth;
         try {
             if (!setup) {
                 trigPin.low();
@@ -42,12 +44,14 @@ public class UltraSonic implements Sensor {
             TimeUnit.MILLISECONDS.sleep(10);
             trigPin.low();
             long startTime = System.currentTimeMillis();
-            boolean timeout = true;
-            while (timeout) {
+            boolean timeout = false;
+            for (int a = 1; a <= attempts; a++) {
                 timeout = false;
+                System.out.println("UltraSonic: attempt " + a + " out of " + attempts);
                 while (!timeout && echoPin.isLow()) {
                     pulseStart = System.nanoTime();
-                    if (System.currentTimeMillis() > startTime + 5000) {
+                    if (System.currentTimeMillis() > startTime + t_out) {
+                        System.out.println("Timed out while waiting for echo");
                         timeout = true;
                     }
 
@@ -55,14 +59,20 @@ public class UltraSonic implements Sensor {
                 startTime = System.currentTimeMillis();
                 while (!timeout && echoPin.isHigh()) {
                     pulseEnd = System.nanoTime();
-                    if (System.currentTimeMillis() > startTime + 5000) {
+                    if (System.currentTimeMillis() > startTime + t_out) {
+                        System.out.println("Timed out while receiving echo");
                         timeout = true;
                     }
 
                 }
             }
+            if (timeout) {
+                System.out.println("UltraSonic timed out!");
+                return distance;
+            } else {
                 pulseWidth = pulseEnd - pulseStart;
                 distance = getDistance(pulseWidth);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
