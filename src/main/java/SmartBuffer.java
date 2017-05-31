@@ -41,8 +41,9 @@ public class SmartBuffer {
         return false;
     }
 
-    public double estimatePrecipitation(Map<String, Map<String, Double>> weatherForecasts) {
-        double[] percipations = new double[weatherForecasts.keySet().size()];
+    public double estimatePrecipitation(Map<String, Map<Date, Double>> weatherForecasts) {
+        double[] precipations = new double[weatherForecasts.keySet().size()];
+        System.out.println("Total weather stations: " + precipations.length);
         return 0.00;
     }
 
@@ -66,6 +67,7 @@ public class SmartBuffer {
                         Map<Date, Double> eVal = entry.getValue();
                         System.out.println(eName + ": " + eVal);
                     }
+                    System.out.println("Estimated precipitation: " + estimatePrecipitation(wVals));
                     if(predictPrecipitation(wVals)) {
                         System.out.println("There will be rain! :(");
                     }
