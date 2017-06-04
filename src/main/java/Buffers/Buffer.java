@@ -10,4 +10,6 @@ import java.util.List;
 public interface Buffer {
     double getArea();
     double getContent(double height, int accuracy);
+    double getTargetArea();
+    String getType();
 }

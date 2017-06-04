@@ -1,5 +1,6 @@
 package Weather;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
@@ -9,4 +10,5 @@ import java.util.Map;
 public interface Weather {
     Map<Date, Double> getUpdate();
     String getName();
+    int getAvg();
 }

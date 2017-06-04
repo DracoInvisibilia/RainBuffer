@@ -2,6 +2,7 @@ import Buffers.Barrel;
 import Buffers.Buffer;
 import Managers.SensorManager;
 import Managers.WeatherManager;
+import Weather.Weather;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -17,34 +18,28 @@ public class SmartBuffer {
     SensorManager sManager;
     WeatherManager wManager;
     private Calendar cal;
+    private double lat;
+    private double lon;
+    private int roofWidth;
+    private int roofLength;
 
 
-    public SmartBuffer(String name) {
+    public SmartBuffer(String name, double lat, double lon, int roofWidth, int roofLength) {
         System.out.println("Creating Smart Buffer...");
         this.name = name;
+        this.lat = lat;
+        this.lon = lon;
+        this.roofWidth = roofWidth;
+        this.roofLength = roofLength;
     }
 
     public void initialize() {
-        System.out.println("Initializing Smart Buffer...");
-        buffer = new Barrel(10,100);
-        sManager = new SensorManager();
-        wManager = new WeatherManager(5);
-    }
-
-    public boolean predictPrecipitation(Map<String, Map<Date, Double>> weatherForecasts) {
-        for (Map.Entry<String, Map<Date, Double>> weatherStation : weatherForecasts.entrySet()) {
-            Map<Date, Double> forecasts = weatherStation.getValue();
-            for (Map.Entry<Date, Double> forecast : forecasts.entrySet()) {
-                if (forecast.getValue()>0.001) return true;
-            }
-        }
-        return false;
-    }
-
-    public double estimatePrecipitation(Map<String, Map<Date, Double>> weatherForecasts) {
-        double[] precipations = new double[weatherForecasts.keySet().size()];
-        System.out.println("Total weather stations: " + precipations.length);
-        return 0.00;
+        System.out.println("Initializing Smart Buffer at GPS location " + this.lat + ", " + this.lon + "...");
+        buffer = new Barrel(10,100, this.roofWidth*this.roofLength);
+        System.out.println("Buffer type: " + buffer.getType());
+        System.out.println("Roof size: " + buffer.getTargetArea()/10000 + "m2 (" + this.roofWidth + "m by " + this.roofLength + "m)");
+        //sManager = new SensorManager();
+        wManager = new WeatherManager(5, this.lat, this.lon);
     }
 
     public void startSmartness() {
@@ -52,24 +47,32 @@ public class SmartBuffer {
         try {
             while(true) { // Smart loop
                 cal = Calendar.getInstance();
-                Map<String, Double> sVals = sManager.pull();
-                for (Map.Entry<String, Double> entry : sVals.entrySet()) {
-                    String eName = entry.getKey();
-                    double eVal = entry.getValue();
-                    System.out.println(eName + ": " + buffer.getContent(eVal,0));
+                if(sManager!=null) {
+                    Map<String, Double> sVals = sManager.pull();
+                    for (Map.Entry<String, Double> entry : sVals.entrySet()) {
+                        String eName = entry.getKey();
+                        double eVal = entry.getValue();
+                        System.out.println(eName + ": " + buffer.getContent(eVal, 0));
+                    }
                 }
 
-                if(cal.getTime().after(wManager.getNextUpdate())) {
+                if(wManager!=null && cal.getTime().after(wManager.getNextUpdate())) {
                     System.out.println("Pull \"Weather Manager\"");
-                    Map<String, Map<Date, Double>> wVals = wManager.pull();
-                    for (Map.Entry<String, Map<Date, Double>> entry : wVals.entrySet()) {
-                        String eName = entry.getKey();
+                    Map<Weather, Map<Date, Double>> wVals = wManager.pull();
+                    /*
+                    for (Map.Entry<Weather, Map<Date, Double>> entry : wVals.entrySet()) {
+                        String eName = entry.getKey().getName();
                         Map<Date, Double> eVal = entry.getValue();
                         System.out.println(eName + ": " + eVal);
                     }
-                    System.out.println("Estimated precipitation: " + estimatePrecipitation(wVals));
-                    if(predictPrecipitation(wVals)) {
-                        System.out.println("There will be rain! :(");
+                    */
+
+                    if(wManager.predictPrecipitation(wVals)) {
+                        double precipitation = wManager.estimatePrecipitation(wVals);
+                        double precipitationContent = buffer.getTargetArea()*precipitation/10.0;
+                        System.out.println("Estimated precipitation  in the next 2 hours: " + precipitation + "mm");
+                        System.out.println("Estimated total from roof: " + precipitationContent + "cm3");
+                        System.out.println("Estimated extra liters: " + precipitationContent/1000);
                     }
                 }
 

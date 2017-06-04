@@ -1,3 +1,6 @@
 .idea/
 *.iml
 target/
+git_update.bat
+update.bat
+winscp_update.txt

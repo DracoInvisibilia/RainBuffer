@@ -39,4 +39,12 @@ public class Box implements Buffer {
         return Math.round((this.height-emptyHeight)*this.area)/1000*Math.pow(10,accuracy)/Math.pow(10,accuracy);
     }
 
+    public double getTargetArea() {
+        return 0;
+    }
+
+    public String getType() {
+        return "BOX";
+    }
+
 }
