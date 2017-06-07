@@ -1,5 +1,6 @@
 import Buffers.Barrel;
 import Buffers.Buffer;
+import Managers.ConnectionManager;
 import Managers.SensorManager;
 import Managers.WeatherManager;
 import Weather.Weather;
@@ -17,6 +18,7 @@ public class SmartBuffer {
     Buffer buffer;
     SensorManager sManager;
     WeatherManager wManager;
+    ConnectionManager cManager;
     private Calendar cal;
     private double lat;
     private double lon;
@@ -40,6 +42,7 @@ public class SmartBuffer {
         System.out.println("Roof size: " + buffer.getTargetArea()/10000 + "m2 (" + this.roofWidth + "m by " + this.roofLength + "m)");
         //sManager = new SensorManager();
         wManager = new WeatherManager(5, this.lat, this.lon);
+        cManager = new ConnectionManager();
     }
 
     public void startSmartness() {
