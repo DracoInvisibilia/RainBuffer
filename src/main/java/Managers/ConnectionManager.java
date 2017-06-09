@@ -16,4 +16,9 @@ public class ConnectionManager {
         allConnections = new HashMap<String, Connection>();
         allConnections.put("ARDUINO", new Arduino(5));
     }
+
+    public int fullCommunication(String name, int command) {
+        int response = allConnections.get(name).writeAndRead(command);
+        return response;
+    }
 }

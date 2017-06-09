@@ -1,29 +1,43 @@
 package Managers;
 
-import Sensors.Sensor;
-import Sensors.UltraSonic;
-
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by jklei on 5/29/2017.
  */
 public class SensorManager {
-    private List<Sensor> allSensors;
+    private Map<String, Integer> allSensors;
+    private Calendar cal;
+    private Date nextUpdate;
+    private int updateFrequency = 1;
+    private ConnectionManager cManager;
 
-    public SensorManager() {
-        allSensors = new ArrayList<Sensor>();
-        allSensors.add(new UltraSonic("WATER_LEVEL (in L)"));
+    public SensorManager(ConnectionManager cManager, int updateFrequency) {
+        this.updateFrequency = updateFrequency;
+        nextUpdate = Calendar.getInstance().getTime();
+        this.cManager = cManager;
+        allSensors = new HashMap<String, Integer>();
+        allSensors.put("WATERFLOW_IN", 2);
+        allSensors.put("WATER_LEVEL", 30);
     }
 
-    public Map<String, Double> pull() {
-        Map<String, Double> pulledVals = new HashMap<String, Double>();
-        for (Sensor cSensor: allSensors) {
-            pulledVals.put(cSensor.getName(), cSensor.getSingleReading());
+    public Map<String, Integer> pull() {
+        Map<String, Integer> pulledVals = new HashMap<String, Integer>();
+        for (Map.Entry<String, Integer> sensor : allSensors.entrySet()) {
+            String sensorName = sensor.getKey();
+            int sensorId = sensor.getValue();
+            pulledVals.put(sensorName, cManager.fullCommunication("ARDUINO", sensorId));
         }
+        cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, updateFrequency);
+        nextUpdate = cal.getTime();
         return pulledVals;
+    }
+
+    public Date getNextUpdate() {
+        return this.nextUpdate;
     }
 }

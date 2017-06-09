@@ -15,14 +15,12 @@ public class Box implements Buffer {
     double width = 0;
     double area = 0;
     double height = 0;
-    SensorManager sManager;
 
     public Box(int length, int width, int height) {
         this.length = length;
         this.width = width;
         this.height = height;
         this.area = this.length*this.width;
-        this.sManager = new SensorManager();
     }
 
     public Box(int length, int width, Sensor sensor) {
@@ -33,6 +31,14 @@ public class Box implements Buffer {
 
     public double getArea() {
         return  this.area;
+    }
+
+    public double getTotal(int accuracy) {
+        return 0;
+    }
+
+    public double getEmpty(double height, int accuracy) {
+        return 0;
     }
 
     public double getContent(double emptyHeight, int accuracy) {

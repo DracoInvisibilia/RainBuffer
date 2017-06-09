@@ -5,5 +5,7 @@ package Connections;
  */
 public interface Connection {
     void write(int request);
+    void write(byte[] request);
+    int writeAndRead(int request);
     int read();
 }

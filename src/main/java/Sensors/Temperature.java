@@ -10,19 +10,11 @@ public class Temperature implements Sensor {
         this.name = name;
     }
 
-    public double getSingleReading() {
+    public double getReading() {
         return 0;
     }
 
-    public void getXReading(int X, int interval) {
-
-    }
-
-    public void getContReading(int interval) {
-
-    }
-
-    public String getName() {
-        return null;
+    public double calcValue() {
+        return 0;
     }
 }

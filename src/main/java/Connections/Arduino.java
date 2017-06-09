@@ -39,9 +39,8 @@ public class Arduino implements Connection {
                 Random rand = new Random();
 
                 int handshake = rand.nextInt(100);
-                System.out.println("Handshake: " + handshake);
-                byte[] handshake_b = new byte[2];
-                write(handshake);
+                byte[] handshake_b = {0, (byte)handshake};
+                write(handshake_b);
                 System.out.println("Waiting for " + (wait/1000) + "s");
                 System.out.println("Reading...");
                 int response = -1;
@@ -64,6 +63,14 @@ public class Arduino implements Connection {
         }
     }
 
+    public void write(byte[] request) {
+        try {
+            ardDev.write(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public int read() {
         int response = -1;
         byte[] response_b = new byte[4];
@@ -75,6 +82,15 @@ public class Arduino implements Connection {
         } finally {
             return response;
         }
+    }
+
+    public int writeAndRead(int command) {
+        int response = -1;
+        write(command);
+        while(response==-1) {
+            response = read();
+        }
+        return response;
     }
 
 }

@@ -33,6 +33,14 @@ public class Barrel implements Buffer {
         return this.targetArea;
     }
 
+    public double getTotal(int accuracy) {
+        return Math.round(this.height*this.area)/1000*Math.pow(10,accuracy)/Math.pow(10,accuracy);
+    }
+
+    public double getEmpty(double emptyHeight, int accuracy) {
+        return Math.round(emptyHeight*this.area)/1000*Math.pow(10,accuracy)/Math.pow(10,accuracy);
+    }
+
     public double getContent(double emptyHeight, int accuracy) {
         return Math.round((this.height-emptyHeight)*this.area)/1000*Math.pow(10,accuracy)/Math.pow(10,accuracy);
     }
