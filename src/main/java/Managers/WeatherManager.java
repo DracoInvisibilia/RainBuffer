@@ -3,6 +3,8 @@ package Managers;
 import Sensors.Sensor;
 import Weather.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -24,6 +26,36 @@ public class WeatherManager {
         allWeather.add(new Buienradar(this.lat, this.lon));
         this.updateFrequency = updateFrequency;
         nextUpdate = Calendar.getInstance().getTime();
+    }
+
+    public Map<Date, Double> estimatePrecipitationSmart(Map<Weather, Map<Date, Double>> weatherStations, double roofSize) {
+        Map<Date, Double> estimatedDownfalls = new TreeMap<Date, Double>();
+        Map<Date, Integer> amountOfUpdates = new HashMap<Date, Integer>();
+        for(Weather weatherStation : weatherStations.keySet()) {
+            Map<Date, Double> wForecasts = weatherStations.get(weatherStation);
+            Map<Date, Double> swForecasts = new TreeMap<Date, Double>();
+            swForecasts.putAll(wForecasts);
+            double totalPrecipitation = 0;
+            for(Map.Entry<Date, Double> wForecast : swForecasts.entrySet()) {
+                Date currentDate = wForecast.getKey();
+                double currentForecast = wForecast.getValue();
+                totalPrecipitation += currentForecast*weatherStation.getAvg()/60;
+                if(estimatedDownfalls.containsKey(currentDate)) {
+                    int updateAmount = amountOfUpdates.get(currentDate);
+                    estimatedDownfalls.put(currentDate, roofSize*(estimatedDownfalls.get(currentDate)*((updateAmount)/(updateAmount+1))+(totalPrecipitation*(1/(updateAmount+1))))/10000.0);
+                    amountOfUpdates.put(currentDate, updateAmount+1);
+                } else {
+                    estimatedDownfalls.put(currentDate, roofSize*totalPrecipitation/10000.0);
+                    amountOfUpdates.put(currentDate, 1);
+                }
+            }
+
+            for(Map.Entry<Date, Double> test : estimatedDownfalls.entrySet()) {
+                System.out.println(test.getKey().toString() + ": " + test.getValue());
+            }
+        }
+
+        return estimatedDownfalls;
     }
 
     public double estimatePrecipitation(Map<Weather, Map<Date, Double>> weatherForecasts) {

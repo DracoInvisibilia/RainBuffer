@@ -5,10 +5,11 @@ import org.joda.time.Minutes;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.time.*;
 
 /**
  * Created by jklei on 5/29/2017.
@@ -56,7 +57,7 @@ public class Buienradar implements Weather {
 
 
     private Map<Date, Double> parseStoStd(String update) {
-        //update = "15|07:20 15|07:25 15|07:30 15|07:35 15|07:40 15|07:45 15|07:50 15|07:55 15|08:00 15|08:05 15|08:10 15|08:15 15|08:20 15|08:25 15|08:30 15|08:35 15|08:40 15|08:45 15|08:50 15|08:55 15|09:00 15|09:05 150|09:10 150|09:15";
+        update = "15|07:20 15|07:25 15|07:30 15|07:35 15|07:40 15|07:45 15|07:50 15|07:55 15|08:00 15|08:05 15|08:10 15|08:15 15|08:20 15|08:25 15|08:30 15|08:35 15|08:40 15|08:45 15|08:50 15|08:55 15|09:00 15|09:05 150|09:10 150|09:15";
         ArrayList<Integer> interTimes = new ArrayList<Integer>();
         Calendar now = Calendar.getInstance();
         int[] current_time = {now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE)};
@@ -100,11 +101,19 @@ public class Buienradar implements Weather {
             if (future.after(now)) {
                 interTimes.add(Minutes.minutesBetween(lastDate, new DateTime(future.getTime())).getMinutes());
                 lastDate = new DateTime(future.getTime());
-                predictionData.put(future.getTime(), calculatePrecipitation(Double.parseDouble(prediction[0])));
+                predictionData.put(future.getTime(), round(calculatePrecipitation(Double.parseDouble(prediction[0])),2));
             }
         }
         t_avg = calcAvg(interTimes);
         return predictionData;
+    }
+
+    private double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     private double calculatePrecipitation(double value) {

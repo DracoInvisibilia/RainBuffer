@@ -1,5 +1,7 @@
 package Managers;
 
+import Connections.Packet.Command;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,7 +23,7 @@ public class SensorManager {
         this.cManager = cManager;
         allSensors = new HashMap<String, Integer>();
         allSensors.put("WATERFLOW_IN", 2);
-        allSensors.put("WATER_LEVEL", 30);
+        allSensors.put("WATER_LEVEL", 1);
     }
 
     public Map<String, Integer> pull() {
@@ -29,7 +31,7 @@ public class SensorManager {
         for (Map.Entry<String, Integer> sensor : allSensors.entrySet()) {
             String sensorName = sensor.getKey();
             int sensorId = sensor.getValue();
-            pulledVals.put(sensorName, cManager.fullCommunication("ARDUINO", sensorId));
+            pulledVals.put(sensorName, cManager.verifiedCommunication("ARDUINO", sensorId, Command.GET.getCode(), 0));
         }
         cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, updateFrequency);
