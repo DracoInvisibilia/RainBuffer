@@ -1,16 +1,13 @@
 import Buffers.Barrel;
 import Buffers.Buffer;
-import Connections.Connection;
-import Connections.Packet.ArduinoPacket;
-import Managers.ActuatorManager;
-import Managers.ConnectionManager;
-import Managers.SensorManager;
-import Managers.WeatherManager;
+import Connections.Packets.ArduinoPacket;
+import Event.EventType;
+import Event.Priority;
+import Managers.*;
 import Weather.Weather;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 
-import java.security.KeyManagementException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -18,12 +15,13 @@ import java.util.concurrent.TimeUnit;
  * Created by jklei on 5/29/2017.
  */
 public class SmartBuffer {
-    String name = null;
-    Buffer buffer;
-    SensorManager sManager;
-    WeatherManager wManager;
-    ConnectionManager cManager;
-    ActuatorManager aManager;
+    private String name = null;
+    private Buffer buffer;
+    private SensorManager sManager;
+    private WeatherManager wManager;
+    private ConnectionManager cManager;
+    private ActuatorManager aManager;
+    private EventManager eManager;
     double dischargeRate = 3;
     private Calendar cal;
     private double lat;
@@ -49,10 +47,12 @@ public class SmartBuffer {
     }
 
     public void initialize() {
-        System.out.println("Initializing Smart Buffer at GPS location " + this.lat + ", " + this.lon + "...");
+        eManager = new EventManager();
+        eManager.createEvent(Priority.NOTIFICATION, EventType.INITIALIZATION, "Initializing Smart Buffer at GPS location " + this.lat + ", " + this.lon + "...");
+        //System.out.println("Initializing Smart Buffer at GPS location " + this.lat + ", " + this.lon + "...");
         buffer = new Barrel(57,83, this.roofWidth*this.roofLength);
-        System.out.println("Buffer type: " + buffer.getType());
-        System.out.println("Roof size: " + buffer.getTargetArea()/10000 + "m2 (" + this.roofWidth + "m by " + this.roofLength + "m)");
+        //System.out.println("Buffer type: " + buffer.getType());
+        //System.out.println("Roof size: " + buffer.getTargetArea()/10000 + "m2 (" + this.roofWidth + "m by " + this.roofLength + "m)");
         wManager = new WeatherManager(30, this.lat, this.lon);
         cManager = new ConnectionManager(true);
         sManager = new SensorManager(cManager, 1);
@@ -81,32 +81,36 @@ public class SmartBuffer {
             while(true) { // Smart loop
                 cal = Calendar.getInstance();
 
-                if(sManager!=null) System.out.println("Next update (sensor): " + sManager.getNextUpdate().toString());
+                //if(sManager!=null) System.out.println("Next update (sensor): " + sManager.getNextUpdate().toString());
                 if(sManager!=null && cal.getTime().after(sManager.getNextUpdate())) {
-                    System.out.println("Pull \"Sensor Manager\"");
+                    System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_REQUEST, "Pulling Sensor Manager...").toString());
+                    //System.out.println("Pull \"Sensor Manager\"");
                     Map<String, Integer> sVals = sManager.pull();
+                    /*
                     for (Map.Entry<String, Integer> entry : sVals.entrySet()) {
                         String eName = entry.getKey();
                         double eVal = entry.getValue();
                         System.out.println(eName + ": " + eVal);
                     }
+                    */
                     sensorData = sVals;
                 }
 
                 System.out.println("Next update (weather): " + wManager.getNextUpdate().toString());
                 if(!isEmptying && wManager!=null && cal.getTime().after(wManager.getNextUpdate())) {
-                    System.out.println("Pull \"Weather Manager\"");
+                    System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_REQUEST, "Pulling Weather Manager...").toString());
                     Map<Weather, Map<Date, Double>> wVals = wManager.pull();
-
+                    /*
                     for (Map.Entry<Weather, Map<Date, Double>> entry : wVals.entrySet()) {
                         String eName = entry.getKey().getName();
                         Map<Date, Double> eVal = entry.getValue();
                         System.out.println(eName + ": " + eVal);
                     }
+                    */
 
                     if(wManager.predictPrecipitation(wVals)) {
                         /* SMART SCRIPT */
-                        System.out.println("SMART SCRIPT:");
+                        //System.out.println("SMART SCRIPT:");
                         Map<Date, Double> precipitationSmartData = new TreeMap<Date, Double>(wManager.estimatePrecipitationSmart(wVals, buffer.getTargetArea()));
                         Object[] allDates = precipitationSmartData.keySet().toArray();
                         int dateIndex = 0;
@@ -117,23 +121,23 @@ public class SmartBuffer {
                             dateIndex++;
                         }
                         double extraInBuffer = precipitationSmartData.get(allDates[allDates.length-1]);
-                        System.out.println("Newest time: " + currentTime.toString());
-                        System.out.println("First rain: " + firstRain.toString());
-                        System.out.println("Total new in buffer: " + extraInBuffer);
+                        //System.out.println("Newest time: " + currentTime.toString());
+                        //System.out.println("First rain: " + firstRain.toString());
+                        //System.out.println("Total new in buffer: " + extraInBuffer);
 
 
                         if(buffer.getContent(sensorData.get("WATER_LEVEL"), 2)+extraInBuffer>buffer.getTotal(2)) {
                             int intervalMinutes = Minutes.minutesBetween(new DateTime(currentTime.getTime()), new DateTime(firstRain.getTime())).getMinutes();
 
-                            System.out.println("Interval between now and rain: " + intervalMinutes);
+                            //System.out.println("Interval between now and rain: " + intervalMinutes);
 
                             double dischargeLiters = extraInBuffer-extraInBuffer*0.8;
                             // double dischargeLiters = sensorData.get("WATER_LEVEL"), 2)+extraInBuffer-buffer.getTotal(2);
 
                             int dischargeTime = (int) (dischargeLiters / dischargeRate);
 
-                            System.out.println("Liters to be discharged: " + dischargeLiters);
-                            System.out.println("Discharge time: " + dischargeTime);
+                            //System.out.println("Liters to be discharged: " + dischargeLiters);
+                            //System.out.println("Discharge time: " + dischargeTime);
 
                             if (nextDischargeStart == null) {
                                 int randomDischarge = new Random().nextInt(intervalMinutes - dischargeTime + 1);
@@ -142,7 +146,7 @@ public class SmartBuffer {
                                 startDischarge.add(Calendar.MINUTE, randomDischarge);
                                 nextDischargeStart = startDischarge;
                                 nextDischargeLiters = dischargeLiters;
-                                System.out.println("NEW DISCHARGE: Start discharging at " + startDischarge.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)");
+                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "New discharge scheduled for " + startDischarge.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             } else if (dischargeLiters > nextDischargeLiters) {
                                 Calendar nextDischargeEnd = (Calendar) nextDischargeStart.clone();
                                 nextDischargeEnd.add(Calendar.MINUTE, dischargeTime);
@@ -150,9 +154,9 @@ public class SmartBuffer {
                                     nextDischargeStart.add(Calendar.MINUTE, -5);
                                     nextDischargeEnd.add(Calendar.MINUTE, -5);
                                 }
-                                System.out.println("UPDATED DISCHARGE: Start discharging at " + nextDischargeStart.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)");
+                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Updated discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             } else {
-                                System.out.println("SCHEDULED DISCHARGE: Discharging at " + nextDischargeStart.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)");
+                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Scheduled discharge at " + nextDischargeStart.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             }
                         }
 
@@ -169,7 +173,7 @@ public class SmartBuffer {
                         */
 
                     } else {
-                        System.out.println("CANCELLED DISCHARGE: Discharging scheduled for " + nextDischargeStart.getTime().toString() + " (" + nextDischargeLiters + "L) was cancelled.");
+                        System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Cancelled discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + nextDischargeLiters + "L.").toString());
                         nextDischargeStart = null;
                         nextDischargeLiters = 0;
                     }

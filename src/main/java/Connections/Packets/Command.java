@@ -1,4 +1,4 @@
-package Connections.Packet;
+package Connections.Packets;
 
 /**
  * Created by jklei on 6/12/2017.

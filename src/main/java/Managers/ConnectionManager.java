@@ -2,9 +2,9 @@ package Managers;
 
 import Connections.Arduino;
 import Connections.Connection;
-import Connections.Packet.ArduinoPacket;
-import Connections.Packet.Command;
-import Connections.Packet.Error;
+import Connections.Packets.ArduinoPacket;
+import Connections.Packets.Command;
+import Connections.Packets.Error;
 
 import java.util.HashMap;
 import java.util.Map;

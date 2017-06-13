@@ -1,12 +1,11 @@
 package Connections;
 
-import Connections.Packet.ArduinoPacket;
+import Connections.Packets.ArduinoPacket;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Random;
 
 /**

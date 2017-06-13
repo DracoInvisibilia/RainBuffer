@@ -1,6 +1,6 @@
 package Connections;
 
-import Connections.Packet.ArduinoPacket;
+import Connections.Packets.ArduinoPacket;
 
 /**
  * Created by jklei on 6/4/2017.

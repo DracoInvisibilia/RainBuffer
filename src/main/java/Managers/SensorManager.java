@@ -1,6 +1,6 @@
 package Managers;
 
-import Connections.Packet.Command;
+import Connections.Packets.Command;
 
 import java.util.Calendar;
 import java.util.Date;
