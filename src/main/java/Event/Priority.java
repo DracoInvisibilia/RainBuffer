@@ -5,9 +5,9 @@ package Event;
  */
 public enum Priority {
     CRITICAL (0, "CRITICAL"),
-    ERROR(1, "GET_VALUE"),
-    WARNING(2, "SET_VALUE"),
-    NOTIFICATION(3, "SET_VALUE");
+    ERROR(1, "ERROR"),
+    WARNING(2, "WARNING"),
+    NOTIFICATION(3, "NOTIFICATION");
 
     private int code;
     private String name;

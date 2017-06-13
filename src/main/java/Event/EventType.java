@@ -14,7 +14,8 @@ public enum EventType {
     DISCHARGE(7, "DISCHARGE"),
     UPDATE_SUCCESS(8, "UPDATE_SUCCESS"),
     SENSOR_SUCCESS(9, "SENSOR_SUCCESS"),
-    UPDATE_REQUEST(10, "UPDATE_REQUEST");
+    UPDATE_REQUEST(10, "UPDATE_REQUEST"),
+    CONNECTION(11, "CONNECTION");
 
     private int code;
     private String name;

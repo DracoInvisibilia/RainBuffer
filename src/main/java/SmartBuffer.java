@@ -54,25 +54,9 @@ public class SmartBuffer {
         //System.out.println("Buffer type: " + buffer.getType());
         //System.out.println("Roof size: " + buffer.getTargetArea()/10000 + "m2 (" + this.roofWidth + "m by " + this.roofLength + "m)");
         wManager = new WeatherManager(30, this.lat, this.lon);
-        cManager = new ConnectionManager(true);
+        cManager = new ConnectionManager(true, eManager);
         sManager = new SensorManager(cManager, 1);
         aManager = new ActuatorManager(cManager);
-    }
-
-    public void testArduino(int wait) {
-        System.out.println("Testing Arduino... (See Arduino)");
-        int count = 0;
-        while(true) {
-            count++;
-            System.out.println("Count: " + count);
-            cManager = new ConnectionManager(false);
-            cManager.getConnection("ARDUINO").sendPacket(new ArduinoPacket(0, 2, 100));
-            try {
-                TimeUnit.SECONDS.sleep(wait);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void startSmartness() {
@@ -96,7 +80,7 @@ public class SmartBuffer {
                     sensorData = sVals;
                 }
 
-                System.out.println("Next update (weather): " + wManager.getNextUpdate().toString());
+                //System.out.println("Next update (weather): " + wManager.getNextUpdate().toString());
                 if(!isEmptying && wManager!=null && cal.getTime().after(wManager.getNextUpdate())) {
                     System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_REQUEST, "Pulling Weather Manager...").toString());
                     Map<Weather, Map<Date, Double>> wVals = wManager.pull();

@@ -97,7 +97,7 @@ public class Arduino implements Connection {
             responsePkt.setCommand(response_b[1]);
             responsePkt.setValue(response_b[2] << 24 | (response_b[3] & 0xFF) << 16 | (response_b[4] & 0xFF) << 8 | (response_b[5] & 0xFF));
             responsePkt.setError(response_b[6] << 24 | (response_b[7] & 0xFF) << 16 | (response_b[8] & 0xFF) << 8 | (response_b[9] & 0xFF));
-            System.out.println("Received packet: " + responsePkt.toString());
+            //System.out.println("Received packet: " + responsePkt.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

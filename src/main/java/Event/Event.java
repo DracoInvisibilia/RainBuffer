@@ -53,6 +53,6 @@ public class Event {
     }
 
     public String toString() {
-        return this.eventDate + "\t[" + this.priority.getName() + "]\t" + this.eventType.getName() + ":\t" + this.eventType;
+        return this.eventDate + " [" + this.priority.getName() + "] " + this.eventType.getName() + ":\t" + this.eventMessage;
     }
 }

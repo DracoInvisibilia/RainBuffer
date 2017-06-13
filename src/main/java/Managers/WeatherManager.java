@@ -49,10 +49,6 @@ public class WeatherManager {
                     amountOfUpdates.put(currentDate, 1);
                 }
             }
-
-            for(Map.Entry<Date, Double> test : estimatedDownfalls.entrySet()) {
-                System.out.println(test.getKey().toString() + ": " + test.getValue());
-            }
         }
 
         return estimatedDownfalls;
