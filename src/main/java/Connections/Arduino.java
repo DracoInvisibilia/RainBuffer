@@ -11,7 +11,7 @@ import java.util.Random;
 /**
  * Created by jklei on 6/4/2017.
  */
-public class Arduino implements Connection {
+public class Arduino implements HardwareConnection {
     I2CBus ardBus;
     I2CDevice ardDev;
     long wait = 20;
@@ -46,7 +46,9 @@ public class Arduino implements Connection {
                 System.out.println("Reading...");
                 int response = -1;
                 while (response!=handshake) {
-                    response = receivePacket().getValue();
+                    ArduinoPacket ap = receivePacket();
+                    response = ap.getValue();
+                    System.out.println("response: "+ ap.toString() );
                     System.out.println("Handshake vs. Response=" + handshake + " vs. " + response);
                 }
                 System.out.println("Communication established between Pi and Arduino!");

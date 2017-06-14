@@ -187,7 +187,20 @@ public class SmartBuffer {
                     aManager.update("VALVE_GARDEN", false);
                 }
                 */
+                if(cManager!=null && cal.getTime().after(cManager.getNextUpdate())) {
 
+                    if(sensorData != null){
+                        Integer waterLevel = sensorData.get("WATER_LEVEL");
+                        if(waterLevel != null){
+
+                            cManager.updateWaterLevel(((double)waterLevel)/1000.0);
+
+                        }
+
+
+                    }
+
+                }
                 TimeUnit.SECONDS.sleep(10);
             }
         } catch (InterruptedException e) {
