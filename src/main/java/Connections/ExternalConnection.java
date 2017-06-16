@@ -2,11 +2,11 @@ package Connections;
 
 import Event.EventType;
 import Event.Priority;
-
+import Event.Event;
 import java.util.Date;
 
 public interface ExternalConnection {
-    void pushError(EventType et, Priority priority, String message);
+    void pushEvent(Event e);
     void pushWaterLevel(double d);
     Date getNextUpdate();
 

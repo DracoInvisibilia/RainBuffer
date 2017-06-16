@@ -4,6 +4,7 @@ import Connections.Packets.ArduinoPacket;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
+import com.pi4j.wiringpi.Gpio;
 
 import java.io.IOException;
 import java.util.Random;
@@ -20,6 +21,7 @@ public class Arduino implements HardwareConnection {
         System.out.println("Starting connection to Arduino...");
         this.wait = wait*1000;
         try {
+           // System.out.println("Return from wiringsetup: "+ Gpio.wiringPiSetupPhys ());
             System.out.println("Creating bus for Arduino communication...");
             ardBus = I2CFactory.getInstance(I2CBus.BUS_1);
             System.out.println("Creating device for Arduino communication...");

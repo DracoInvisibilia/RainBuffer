@@ -24,7 +24,7 @@ public enum EventType {
         this.name = name;
     }
 
-    int getInt() {
+    public int getInt() {
        return this.code;
     }
 

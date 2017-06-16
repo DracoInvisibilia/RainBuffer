@@ -7,6 +7,7 @@ import Connections.Packets.ArduinoPacket;
 import Connections.Packets.Command;
 import Connections.Packets.Error;
 import Connections.RestApi;
+import Event.Event;
 import Event.EventType;
 import Event.Priority;
 import org.joda.time.DateTime;
@@ -36,10 +37,11 @@ public class ConnectionManager {
         this.eManager = eManager;
         hardwareConnections = new HashMap<String, HardwareConnection>();
         hardwareConnections.put("ARDUINO", new Arduino(5, init));
-        ExternalConnection localTonnie = new RestApi(1, "http://localhost", 1);
+        ExternalConnection localTonnie = new RestApi(1, "http://localhost/app_ton.php", 1);
+        externalConnections = new HashMap<String, ExternalConnection>();
         externalConnections.put("localTonnie", localTonnie);
         nextUpdate = localTonnie.getNextUpdate();
-
+        eManager.registerConnectionManager(this);
     }
 
     public int fullCommunication(String name, int command) {
@@ -60,16 +62,29 @@ public class ConnectionManager {
     }
 
     public void updateWaterLevel(double d) {
-        Date nextUpdate = this.nextUpdate;
+        Date now = DateTime.now().toDate();
         for (Map.Entry<String, ExternalConnection> eec :
                 externalConnections.entrySet()) {
             ExternalConnection ec = eec.getValue();
-            if (ec.getNextUpdate().before(nextUpdate)) {
+            System.out.println(now.toString());
+            System.out.println(ec.getNextUpdate());
+
+            if (ec.getNextUpdate().before(now)) {
                 ec.pushWaterLevel(d);
+                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_SUCCESS, "webserver " + eec.getKey() + " updated waterlevel :" + d));
                 this.updateTime(ec.getNextUpdate());
 
             }
         }
+    }
+
+    public void pushEvent(Event e){
+            ExternalConnection ec = externalConnections.get("localTonnie");
+            if(ec != null){
+                ec.pushEvent(e);
+            }
+
+
     }
 
     public HardwareConnection getConnection(String name) {
