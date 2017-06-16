@@ -14,16 +14,31 @@ public class SensorManager {
     private Map<String, Integer> allSensors;
     private Calendar cal;
     private Date nextUpdate;
+    private int updateFrequency_default = 1;
     private int updateFrequency = 1;
     private ConnectionManager cManager;
 
     public SensorManager(ConnectionManager cManager, int updateFrequency) {
         this.updateFrequency = updateFrequency;
+        this.updateFrequency_default = updateFrequency;
         nextUpdate = Calendar.getInstance().getTime();
         this.cManager = cManager;
         allSensors = new HashMap<String, Integer>();
         allSensors.put("WATERFLOW_IN", 2);
         allSensors.put("WATER_LEVEL", 1);
+    }
+
+    public void setRelativeUpdateFrequency(double relative) {
+        this.updateFrequency*=relative;
+        System.out.println("Updated frequency: " + this.updateFrequency);
+    }
+
+    public void setUpdateFrequency(int newFrequency) {
+        this.updateFrequency = newFrequency;
+    }
+
+    public void setDefaultUpdateFrequency() {
+        this.updateFrequency = this.updateFrequency_default;
     }
 
     public Map<String, Integer> pull() {

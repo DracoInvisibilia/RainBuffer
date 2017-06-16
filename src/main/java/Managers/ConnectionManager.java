@@ -69,11 +69,7 @@ public class ConnectionManager {
                 this.updateTime(ec.getNextUpdate());
 
             }
-
-
         }
-
-
     }
 
     public HardwareConnection getConnection(String name) {

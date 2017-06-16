@@ -93,6 +93,7 @@ public class SmartBuffer {
                     */
 
                     if(wManager.predictPrecipitation(wVals)) {
+                        sManager.setDefaultUpdateFrequency();
                         /* SMART SCRIPT */
                         //System.out.println("SMART SCRIPT:");
                         Map<Date, Double> precipitationSmartData = new TreeMap<Date, Double>(wManager.estimatePrecipitationSmart(wVals, buffer.getTargetArea()));
@@ -104,6 +105,9 @@ public class SmartBuffer {
                             firstRain = (Date) allDates[dateIndex];
                             dateIndex++;
                         }
+
+                        if(precipitationSmartData.get(allDates[0])!=0) sManager.setRelativeUpdateFrequency(0.5);
+
                         double extraInBuffer = precipitationSmartData.get(allDates[allDates.length-1]);
                         //System.out.println("Newest time: " + currentTime.toString());
                         //System.out.println("First rain: " + firstRain.toString());
@@ -157,6 +161,7 @@ public class SmartBuffer {
                         */
 
                     } else {
+                        sManager.setRelativeUpdateFrequency(2);
                         System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Cancelled discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + (int)nextDischargeLiters + "L.").toString());
                         nextDischargeStart = null;
                         nextDischargeLiters = 0;
