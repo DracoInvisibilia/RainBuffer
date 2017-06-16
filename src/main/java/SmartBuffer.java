@@ -124,13 +124,13 @@ public class SmartBuffer {
                             //System.out.println("Discharge time: " + dischargeTime);
 
                             if (nextDischargeStart == null) {
-                                int randomDischarge = new Random().nextInt(intervalMinutes - dischargeTime + 1);
+                                int randomDischarge = (intervalMinutes > dischargeTime) ? new Random().nextInt(intervalMinutes - dischargeTime + 1) : 0;
                                 Calendar startDischarge = Calendar.getInstance();
                                 startDischarge.setTime(currentTime);
                                 startDischarge.add(Calendar.MINUTE, randomDischarge);
                                 nextDischargeStart = startDischarge;
                                 nextDischargeLiters = dischargeLiters;
-                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "New discharge scheduled for " + startDischarge.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
+                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "New discharge scheduled for " + startDischarge.getTime().toString() + " for " + (int)dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             } else if (dischargeLiters > nextDischargeLiters) {
                                 Calendar nextDischargeEnd = (Calendar) nextDischargeStart.clone();
                                 nextDischargeEnd.add(Calendar.MINUTE, dischargeTime);
@@ -138,9 +138,9 @@ public class SmartBuffer {
                                     nextDischargeStart.add(Calendar.MINUTE, -5);
                                     nextDischargeEnd.add(Calendar.MINUTE, -5);
                                 }
-                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Updated discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
+                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Updated discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + (int)dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             } else {
-                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Scheduled discharge at " + nextDischargeStart.getTime().toString() + " for " + dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
+                                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Scheduled discharge at " + nextDischargeStart.getTime().toString() + " for " + (int)dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             }
                         }
 
@@ -157,7 +157,7 @@ public class SmartBuffer {
                         */
 
                     } else {
-                        System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Cancelled discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + nextDischargeLiters + "L.").toString());
+                        System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Cancelled discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + (int)nextDischargeLiters + "L.").toString());
                         nextDischargeStart = null;
                         nextDischargeLiters = 0;
                     }
@@ -166,12 +166,12 @@ public class SmartBuffer {
                 if(nextDischargeStart!=null && cal.getTime().after(nextDischargeStart.getTime())) {
                     if(!isEmptying) {
                         System.out.println("EMPYTING: Start emptying.");
-                        aManager.update("VALVE_GARDEN", true);
+                        aManager.update("VALVE_SEWER", true);
                         isEmptying=true;
                     } else {
                         if(buffer.getTotal(2)-nextDischargeLiters >= buffer.getContent(sensorData.get("WATER_LEVEL"), 2)) {
                             System.out.println("EMPTYING: Stop emptying.");
-                            aManager.update("VALVE_GARDEN", false);
+                            aManager.update("VALVE_SEWER", false);
                             isEmptying=false;
                             nextDischargeStart = null;
                             nextDischargeLiters = 0;

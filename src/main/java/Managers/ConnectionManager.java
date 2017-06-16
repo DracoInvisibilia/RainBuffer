@@ -33,9 +33,9 @@ public class ConnectionManager {
         ArduinoPacket transmitPkt = new ArduinoPacket(sensor, command, val);
         allConnections.get(name).sendPacket(transmitPkt);
         ArduinoPacket responsePkt = allConnections.get(name).receivePacket();
+        //System.out.println(responsePkt.toString());
         if(responsePkt.isAnswerTo(transmitPkt) && !responsePkt.hasError()) {
             System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.SENSOR_SUCCESS, "Got answer to question: SID=" + sensor + ",COMMAND: " + Command.getCommand(command) + ", namely: " + responsePkt.getValue()).toString());
-            //System.out.println(");
         } else if (responsePkt.hasError()) {
             System.out.println(eManager.createEvent(Priority.WARNING, EventType.SENSOR_FAILURE, "Got error to question: SID=" + sensor + ",COMMAND: " + Command.getCommand(command) + ", namely: " + Error.getError(responsePkt.getError()).toString()));
              }
