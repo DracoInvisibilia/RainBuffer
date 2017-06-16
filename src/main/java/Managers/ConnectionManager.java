@@ -51,11 +51,10 @@ public class ConnectionManager {
 
     public int verifiedCommunication(String name, int sensor, int command, int val) {
         ArduinoPacket transmitPkt = new ArduinoPacket(sensor, command, val);
-        hardwareConnections.get(name).sendPacket(transmitPkt);
         ArduinoPacket responsePkt = hardwareConnections.get(name).receivePacket();
+        hardwareConnections.get(name).sendPacket(transmitPkt);
         if (responsePkt.isAnswerTo(transmitPkt) && !responsePkt.hasError()) {
             System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.SENSOR_SUCCESS, "Got answer to question: SID=" + sensor + ",COMMAND: " + Command.getCommand(command) + ", namely: " + responsePkt.getValue()).toString());
-            //System.out.println(");
         } else if (responsePkt.hasError()) {
             System.out.println(eManager.createEvent(Priority.WARNING, EventType.SENSOR_FAILURE, "Got error to question: SID=" + sensor + ",COMMAND: " + Command.getCommand(command) + ", namely: " + Error.getError(responsePkt.getError()).toString()));
         }
