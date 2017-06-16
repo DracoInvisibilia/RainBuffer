@@ -188,17 +188,16 @@ public class SmartBuffer {
                 }
                 */
                 if(cManager!=null && cal.getTime().after(cManager.getNextUpdate())) {
-
+                    //System.out.println("updating server=====================================");
                     if(sensorData != null){
+                    //    System.out.println("sensordata not null");
                         Integer waterLevel = sensorData.get("WATER_LEVEL");
                         if(waterLevel != null){
-
+                      //      System.out.println("waterlevel not null");
                             cManager.updateWaterLevel(((double)waterLevel)/1000.0);
-
                         }
-
-
                     }
+                    //System.out.println("end of server update================================");
 
                 }
                 TimeUnit.SECONDS.sleep(10);

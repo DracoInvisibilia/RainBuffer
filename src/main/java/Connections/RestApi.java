@@ -10,7 +10,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import Event.Event;
 
 /**
  * Created by Dennis on 13-6-2017.
@@ -24,33 +27,79 @@ public class RestApi implements ExternalConnection {
         this.nextUpdate = DateTime.now().plusMinutes(updateInterval);
     }
 
-    private String waterLevelString = "{\"buffer_information\": { \"datetime\": {\n" +
+
+    private String createDateString(Date dt) {
+        return String.format(dateString, dt, new SimpleDateFormat("M").format(dt));
+    }
+
+
+    private String dateString = "{\n" +
             "    \"date\": {\n" +
-            "        \"year\": %1tY,\n" +
-            "        \"month\": %1tm,\n" +
-            "        \"day\": %1te\n" +
+            "        \"year\": %1$tY,\n" +
+            "        \"month\": %2$s,\n" +
+            "        \"day\": %1$te\n" +
             "    },\n" +
             "    \"time\": {\n" +
-            "        \"hour\": %1tH,\n" +
-            "        \"minute\": %1tM\n" +
+            "        \"hour\": %1$tk,\n" +
+            "        \"minute\": %1$tM\n" +
             "    }\n" +
-            "}, \"buffer\" : \"%2d\" , \"waterLevel\": \"%2f\"}\n" +
             "}";
 
-    public RestApi(int id, String url,  int updateInterval) {
+    private String eventString = "{\"event\": { \"datetime\":  %1$s, \"buffer\" : \"%2$d\" , \"eventtype\": \"%3$d\", \"priority\" : \"%4$d\", \"message\": \"%5$s\"}\n" +
+            "}\n";
+
+    private String waterLevelString = "{\"buffer_information\": { \"datetime\": %1$s, \"buffer\" : \"%2$d\" , \"waterLevel\": \"%3$f\"}\n" +
+            "}";
+
+    public RestApi(int id, String url, int updateInterval) {
         this.updateInterval = updateInterval;
         this.id = id;
-        this.updateNextTime();
+        this.nextUpdate = DateTime.now();
         try {
             this.waterLevelUrl = new URL(url + "/bufferinformations");
-            this.errorUrl = new URL(url + "/error");
+            this.errorUrl = new URL(url + "/events");
         } catch (Exception e) {
 
         }
     }
 
     @Override
-    public void pushError(EventType et, Priority priority, String message) {
+    public void pushEvent(Event e) {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) errorUrl.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            String input = String.format(eventString, this.createDateString(e.getEventDate()),
+                    id,
+                    e.getEventType().getInt(),
+                    e.getPriority().getPriority(),
+                    e.getEventMessage());
+
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
+                System.out.println("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+                System.out.println("original message\n" + input);
+
+                System.out.println("Return message\n" + conn.getResponseMessage());
+                System.out.println("Return message\n" + conn.getContent().toString());
+
+                System.out.println("end");
+
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            conn.disconnect();
+            this.updateNextTime();
+        } catch (IOException er) {
+            er.printStackTrace();
+        }
 
     }
 
@@ -61,16 +110,23 @@ public class RestApi implements ExternalConnection {
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
-
-            String input = String.format(waterLevelString, DateTime.now(), id, d);  //"{\"qty\":100,\"name\":\"iPad 4\"}";
+            Date dt = DateTime.now().toDate();
+            String input = String.format(waterLevelString, this.createDateString(dt), id, d);  //"{\"qty\":100,\"name\":\"iPad 4\"}";
 
             OutputStream os = conn.getOutputStream();
             os.write(input.getBytes());
             os.flush();
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
-                throw new RuntimeException("Failed : HTTP error code : "
+                System.out.println("Failed : HTTP error code : "
                         + conn.getResponseCode());
+                System.out.println("original message\n" + input);
+
+                System.out.println("Return message\n" + conn.getResponseMessage());
+                System.out.println("Return message\n" + conn.getContent().toString());
+
+                System.out.println("end");
+
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -79,7 +135,7 @@ public class RestApi implements ExternalConnection {
             conn.disconnect();
             this.updateNextTime();
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
 
     }
