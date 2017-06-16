@@ -6,7 +6,7 @@ package Event;
 public enum EventType {
     SENSOR_FAILURE(0, "SENSOR_FAILURE"),    // Thrown from Arduino when a sensor doesn't work
     UPDATE_FAILURE(1, "UPDATE_FAILURE"),         // Thrown when updating data goes wrong
-    CONNECTION_FAILURE(2, "CONNECTION_FAILURE"),     // Connection failure (either between Arduino, WiFi, DB or weather stations
+    CONNECTION_FAILURE(2, "CONNECTION_FAILURE"),     // HardwareConnection failure (either between Arduino, WiFi, DB or weather stations
     DANGEROUS_SITUATION(3, "DANGEROUS_SITUATION"),  // Dangerous situations (system becoming too hot/cold)
     CRITICAL_SITUATION(4, "CRITICAL_SITUATION"), // Critical situation (overheating/freezing)
     SYSTEM_FAILURE(5, "SYSTEM_FAILURE"),    // General system failure, cannot continue after this failure
