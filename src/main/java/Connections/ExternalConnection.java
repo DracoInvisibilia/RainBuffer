@@ -9,6 +9,6 @@ public interface ExternalConnection {
     void pushEvent(Event e);
     void pushWaterLevel(double d);
     Date getNextUpdate();
-
+    void pushDischarge(Date d, double amount);
 
 }

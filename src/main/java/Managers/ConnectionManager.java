@@ -38,8 +38,10 @@ public class ConnectionManager {
         hardwareConnections = new HashMap<String, HardwareConnection>();
         hardwareConnections.put("ARDUINO", new Arduino(5, init));
         ExternalConnection localTonnie = new RestApi(1, "http://localhost/app_ton.php", 1);
+        ExternalConnection theGreatServer = new RestApi(1, "http://regenbuffer.student.utwente.nl/app.php", 1);
         externalConnections = new HashMap<String, ExternalConnection>();
         externalConnections.put("localTonnie", localTonnie);
+        externalConnections.put("theGreatServer",theGreatServer);
         nextUpdate = localTonnie.getNextUpdate();
         eManager.registerConnectionManager(this);
     }
@@ -78,14 +80,26 @@ public class ConnectionManager {
         }
     }
 
-    public void pushEvent(Event e){
-            ExternalConnection ec = externalConnections.get("localTonnie");
-            if(ec != null){
-                ec.pushEvent(e);
-            }
+    public void pushEvent(Event e) {
+        ExternalConnection ec = externalConnections.get("localTonnie");
+        if (ec != null) {
+            ec.pushEvent(e);
+        }
 
 
     }
+
+    public void pushDischarge(Date d, double amount) {
+        for (Map.Entry<String, ExternalConnection> eec :
+                externalConnections.entrySet()) {
+            ExternalConnection ec = eec.getValue();
+            ec.pushDischarge(d,amount);
+            System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_SUCCESS, "webserver " + eec.getKey() + " updated discharge :" + d));
+
+        }
+
+    }
+
 
     public HardwareConnection getConnection(String name) {
         return hardwareConnections.get(name);

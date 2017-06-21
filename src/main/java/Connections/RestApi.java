@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,7 +21,7 @@ import Event.Event;
  */
 public class RestApi implements ExternalConnection {
     private int updateInterval, id;
-    private URL waterLevelUrl, errorUrl;
+    private URL waterLevelUrl, errorUrl, dischargeUrl;
     private DateTime nextUpdate;
 
     private void updateNextTime() {
@@ -51,6 +52,8 @@ public class RestApi implements ExternalConnection {
     private String waterLevelString = "{\"buffer_information\": { \"datetime\": %1$s, \"buffer\" : \"%2$d\" , \"waterLevel\": \"%3$f\"}\n" +
             "}";
 
+    private String dischargeString = "{\"datetime\": \"%1$s\" , \"amount\" : \"%1$f\"}";
+
     public RestApi(int id, String url, int updateInterval) {
         this.updateInterval = updateInterval;
         this.id = id;
@@ -58,6 +61,8 @@ public class RestApi implements ExternalConnection {
         try {
             this.waterLevelUrl = new URL(url + "/bufferinformations");
             this.errorUrl = new URL(url + "/events");
+            this.dischargeUrl = new URL(url + "/buffers/1/planneds");
+
         } catch (Exception e) {
 
         }
@@ -103,6 +108,48 @@ public class RestApi implements ExternalConnection {
 
     }
 
+
+    @Override
+    public void pushDischarge(Date d, double amount) {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) dischargeUrl.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            Date dt = DateTime.now().toDate();
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+            String input = String.format(dischargeString, df.format(d), amount);
+
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
+                System.out.println("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+                System.out.println("original message\n" + input);
+
+                System.out.println("Return message\n" + conn.getResponseMessage());
+                System.out.println("Return message\n" + conn.getContent().toString());
+
+                System.out.println("end");
+
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            conn.disconnect();
+            this.updateNextTime();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
     @Override
     public void pushWaterLevel(double d) {
         try {
@@ -139,6 +186,8 @@ public class RestApi implements ExternalConnection {
         }
 
     }
+
+
 
     @Override
     public Date getNextUpdate() {
