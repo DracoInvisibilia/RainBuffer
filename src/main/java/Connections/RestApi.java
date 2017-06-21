@@ -52,7 +52,7 @@ public class RestApi implements ExternalConnection {
     private String waterLevelString = "{\"buffer_information\": { \"datetime\": %1$s, \"buffer\" : \"%2$d\" , \"waterLevel\": \"%3$f\"}\n" +
             "}";
 
-    private String dischargeString = "{\"datetime\": \"%1$s\" , \"amount\" : \"%1$f\"}";
+    private String dischargeString = "{\"datetime\": \"%1$s\" , \"amount\" : \"%2$f\"}";
 
     public RestApi(int id, String url, int updateInterval) {
         this.updateInterval = updateInterval;
