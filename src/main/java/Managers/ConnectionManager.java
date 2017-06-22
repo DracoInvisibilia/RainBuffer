@@ -37,8 +37,8 @@ public class ConnectionManager {
         this.eManager = eManager;
         hardwareConnections = new HashMap<String, HardwareConnection>();
         hardwareConnections.put("ARDUINO", new Arduino(5, init));
-        ExternalConnection localTonnie = new RestApi(1, "http://localhost/app_ton.php", 1);
-        ExternalConnection theGreatServer = new RestApi(1, "http://regenbuffer.student.utwente.nl/app.php", 1);
+        ExternalConnection localTonnie = new RestApi(1, "http://localhost/app_ton.php", 1,1);
+        ExternalConnection theGreatServer = new RestApi(1, "http://regenbuffer.student.utwente.nl/app.php", 1,1);
         externalConnections = new HashMap<String, ExternalConnection>();
         externalConnections.put("localTonnie", localTonnie);
         externalConnections.put("theGreatServer",theGreatServer);
@@ -77,6 +77,12 @@ public class ConnectionManager {
                 this.updateTime(ec.getNextUpdate());
 
             }
+            if(ec.getNextHeartbeat().before(now)){
+                ec.pushHeartbeat();
+                this.updateTime(ec.getNextHeartbeat());
+                System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_SUCCESS, "webserver " + eec.getKey() + " updated heartbeat"));
+
+            }
         }
     }
 
@@ -99,6 +105,7 @@ public class ConnectionManager {
         }
 
     }
+
 
 
     public HardwareConnection getConnection(String name) {

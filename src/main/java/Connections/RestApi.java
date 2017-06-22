@@ -20,12 +20,17 @@ import Event.Event;
  * Created by Dennis on 13-6-2017.
  */
 public class RestApi implements ExternalConnection {
-    private int updateInterval, id;
-    private URL waterLevelUrl, errorUrl, dischargeUrl;
+    private int updateInterval, id, heartbeatinterval;
+    private URL waterLevelUrl, errorUrl, dischargeUrl, heartbeatUrl;
     private DateTime nextUpdate;
+    private DateTime nextHeartbeat;
 
     private void updateNextTime() {
         this.nextUpdate = DateTime.now().plusMinutes(updateInterval);
+    }
+
+    private void updateHeartbeat() {
+        this.nextHeartbeat = DateTime.now().plusMinutes(heartbeatinterval);
     }
 
 
@@ -54,15 +59,16 @@ public class RestApi implements ExternalConnection {
 
     private String dischargeString = "{\"datetime\": \"%1$s\" , \"amount\" : \"%2$f\"}";
 
-    public RestApi(int id, String url, int updateInterval) {
+    public RestApi(int id, String url, int updateInterval, int heartbeatInterval) {
         this.updateInterval = updateInterval;
         this.id = id;
         this.nextUpdate = DateTime.now();
+        this.heartbeatinterval = heartbeatInterval;
         try {
             this.waterLevelUrl = new URL(url + "/bufferinformations");
             this.errorUrl = new URL(url + "/events");
             this.dischargeUrl = new URL(url + "/buffers/1/planneds");
-
+            this.heartbeatUrl = new URL(url + "/buffers/1/heartbeats");
         } catch (Exception e) {
 
         }
@@ -101,7 +107,6 @@ public class RestApi implements ExternalConnection {
                     (conn.getInputStream())));
 
             conn.disconnect();
-            this.updateNextTime();
         } catch (IOException er) {
             er.printStackTrace();
         }
@@ -148,6 +153,40 @@ public class RestApi implements ExternalConnection {
 
     }
 
+    @Override
+    public void pushHeartbeat() {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) heartbeatUrl.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            String input = "";
+
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
+                System.out.println("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+                System.out.println("original message\n" + input);
+
+                System.out.println("Return message\n" + conn.getResponseMessage());
+                System.out.println("Return message\n" + conn.getContent().toString());
+
+                System.out.println("end");
+
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            conn.disconnect();
+            this.updateHeartbeat();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Override
@@ -187,7 +226,10 @@ public class RestApi implements ExternalConnection {
 
     }
 
-
+    @Override
+    public Date getNextHeartbeat() {
+        return nextHeartbeat.toDate();
+    }
 
     @Override
     public Date getNextUpdate() {
