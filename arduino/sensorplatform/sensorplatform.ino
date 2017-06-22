@@ -27,6 +27,9 @@
 
 // SENSOR PINS
 #define WF_IN 2
+#define WF_FAUC 4
+#define WF_SEWER 3
+#define WF_GAR 5
 #define US_TRIG 30
 #define US_ECHO 31
 #define VALVE_GARDEN 33
@@ -57,6 +60,10 @@ byte transmit_packet[10];
 
 //Sensor stuff
 int32_t WF_in_pulses = 0;
+int32_t WF_faucet_pulses = 0;
+int32_t WF_sewer_pulses = 0;
+int32_t WF_garden_pulses = 0;
+
 long US_time, US_dist;
 int32_t MA_BUF[MA_WINDOW];
 int32_t MA_POS = 0;
@@ -64,6 +71,10 @@ bool MA_INIT = true;
 int valveState = LOW;
 
 volatile uint8_t lastflowpinstate;
+volatile uint8_t lastflowpinstate_sewer;
+volatile uint8_t lastflowpinstate_faucet;
+volatile uint8_t lastflowpinstate_garden;
+
 
 long update_MA(long new_val) {
   MA_BUF[MA_POS] = new_val;
@@ -99,12 +110,43 @@ void useInterrupt(boolean v) {
 SIGNAL(TIMER0_COMPA_vect) {
   uint8_t x = digitalRead(WATERFLOW_IN);
   if (x == lastflowpinstate) {
-    return; // nothing changed!
+   // nothing changed!
+  } else {
+    if (x == HIGH) {
+      WF_in_pulses++;
+    }
+    lastflowpinstate = x;
+    
   }
-  if (x == HIGH) {
-    WF_in_pulses++;
+   x = digitalRead(WF_SEWER);
+  if (x == lastflowpinstate_sewer) {
+   // nothing changed!
+  } else {
+    if (x == HIGH) {
+      WF_sewer_pulses++;
+    }
+    lastflowpinstate_sewer = x;
   }
-  lastflowpinstate = x;
+   x = digitalRead(WF_FAUC);
+  if (x == lastflowpinstate_faucet) {
+   // nothing changed!
+  } else {
+    if (x == HIGH) {
+      WF_faucet_pulses++;
+    }
+    lastflowpinstate_faucet = x;
+  }
+   x = digitalRead(WF_GAR);
+  if (x == lastflowpinstate_garden) {
+   // nothing changed!
+  } else {
+    if (x == HIGH) {
+      WF_garden_pulses++;
+    }
+    lastflowpinstate_garden = x;
+  }
+  
+  
 }
  
 void setup() {
@@ -127,6 +169,9 @@ void setup() {
   digitalWrite(WATERFLOW_IN, HIGH);
   digitalWrite(VALVE_GARDEN, LOW);
   lastflowpinstate = digitalRead(WATERFLOW_IN);
+  lastflowpinstate_sewer = digitalRead(WF_SEWER);
+  lastflowpinstate_faucet = digitalRead(WF_FAUC);
+  lastflowpinstate_garden = digitalRead(WF_GAR);
   useInterrupt(true);
 }
  
@@ -146,7 +191,25 @@ void loop() {
   liters /= 7.5;
   liters /= 60;
   liters *= 1000;
-  Serial.print("Liters: "); Serial.println(liters, DEC);
+  Serial.print("Liters WF_IN: "); Serial.println(liters, DEC);
+
+  liters = WF_sewer_pulses;
+  liters /= 7.5;
+  liters /= 60;
+  liters *= 1000;
+  Serial.print("Liters WF_sewer: "); Serial.println(liters, DEC);
+ 
+  liters = WF_faucet_pulses;
+  liters /= 7.5;
+  liters /= 60;
+  liters *= 1000;
+  Serial.print("Liters WF_sewer: "); Serial.println(liters, DEC);
+ 
+  liters = WF_garden_pulses;
+  liters /= 7.5;
+  liters /= 60;
+  liters *= 1000;
+  Serial.print("Liters WF_sewer: "); Serial.println(liters, DEC);
  
 
   /* 
