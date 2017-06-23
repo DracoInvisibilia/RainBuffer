@@ -68,8 +68,6 @@ public class ConnectionManager {
         for (Map.Entry<String, ExternalConnection> eec :
                 externalConnections.entrySet()) {
             ExternalConnection ec = eec.getValue();
-            System.out.println(now.toString());
-            System.out.println(ec.getNextUpdate());
 
             if (ec.getNextUpdate().before(now)) {
                 ec.pushWaterLevel(d);

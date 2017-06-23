@@ -166,7 +166,7 @@ public class RestApi implements ExternalConnection {
             os.write(input.getBytes());
             os.flush();
 
-            if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT ||conn.getResponseCode() != HttpURLConnection.HTTP_ACCEPTED) {
                 System.out.println("Failed : HTTP error code : "
                         + conn.getResponseCode());
                 System.out.println("original message\n" + input);
