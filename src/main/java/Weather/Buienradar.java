@@ -57,7 +57,7 @@ public class Buienradar implements Weather {
 
 
     private Map<Date, Double> parseStoStd(String update) {
-        update = "15|07:20 15|07:25 15|07:30 15|07:35 15|07:40 15|07:45 15|07:50 15|07:55 15|08:00 15|08:05 15|08:10 15|08:15 15|08:20 15|08:25 15|08:30 15|08:35 15|08:40 15|08:45 15|08:50 15|08:55 15|09:00 15|09:05 150|09:10 150|09:15";
+        //update = "255|07:20 255|07:25 255|07:30 255|07:35 255|07:40 255|07:45 255|07:50 255|07:55 255|08:00 255|08:05 255|08:10 255|08:15 255|08:20 255|08:25 255|08:30 255|08:35 255|08:40 15|08:45 15|08:50 15|08:55 15|09:00 15|09:05 150|09:10 150|09:15";
         ArrayList<Integer> interTimes = new ArrayList<Integer>();
         Calendar now = Calendar.getInstance();
         int[] current_time = {now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE)};

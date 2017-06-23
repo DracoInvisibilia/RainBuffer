@@ -13,16 +13,18 @@ public class Barrel implements Buffer {
     private double targetArea = 0;
 
     public Barrel(double radius, double height, double targetArea) {
-        this.radius = radius;
+        this.radius = (radius/2.0);
         this.height = height;
         this.targetArea = targetArea*10000;
-        this.area = Math.PI*Math.pow(radius, 2);
+        this.area = Math.PI*Math.pow(this.radius, 2);
+        System.out.println("My Area: " + this.area);
+        System.out.println("My height: " + this.height);
     }
 
     public Barrel(double radius, double height, Sensor sensor) {
-        this.radius = radius;
+        this.radius = (radius/2.0);
         this.height = height;
-        this.area = Math.PI*Math.pow(radius, 2);
+        this.area = Math.PI*Math.pow(this.radius, 2);
     }
 
     public double getArea() {

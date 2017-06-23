@@ -50,13 +50,16 @@ public class SmartBuffer {
         eManager = new EventManager();
         eManager.createEvent(Priority.NOTIFICATION, EventType.INITIALIZATION, "Initializing Smart Buffer at GPS location " + this.lat + ", " + this.lon + "...");
         //System.out.println("Initializing Smart Buffer at GPS location " + this.lat + ", " + this.lon + "...");
-        buffer = new Barrel(57,83, this.roofWidth*this.roofLength);
+        buffer = new Barrel(57,70, this.roofWidth*this.roofLength);
         //System.out.println("Buffer type: " + buffer.getType());
         //System.out.println("Roof size: " + buffer.getTargetArea()/10000 + "m2 (" + this.roofWidth + "m by " + this.roofLength + "m)");
         wManager = new WeatherManager(30, this.lat, this.lon);
         cManager = new ConnectionManager(true, eManager);
         sManager = new SensorManager(cManager, 1);
         aManager = new ActuatorManager(cManager);
+
+
+        System.out.println("Total capacity:" + buffer.getTotal(2));
     }
 
     public void startSmartness() {
@@ -94,6 +97,7 @@ public class SmartBuffer {
 
                     if(wManager.predictPrecipitation(wVals)) {
                         sManager.setDefaultUpdateFrequency();
+                        cManager.verifiedCommunication("ARDUINO", 0, 2, 30000);
                         /* SMART SCRIPT */
                         //System.out.println("SMART SCRIPT:");
                         Map<Date, Double> precipitationSmartData = new TreeMap<Date, Double>(wManager.estimatePrecipitationSmart(wVals, buffer.getTargetArea()));
@@ -101,6 +105,13 @@ public class SmartBuffer {
                         int dateIndex = 0;
                         Date currentTime = (Date) allDates[dateIndex];
                         Date firstRain = (Date) allDates[dateIndex];
+
+                        System.out.println("===============PRECIPITATION SMART DATA===============");
+                        for(Map.Entry<Date, Double> pSData: precipitationSmartData.entrySet()) {
+                            System.out.println(pSData.getKey().toString() + ": " + pSData.getValue());
+                        }
+                        System.out.println("======================================================");
+
                         while(precipitationSmartData.get(firstRain)==0.0) {
                             firstRain = (Date) allDates[dateIndex];
                             dateIndex++;
@@ -162,8 +173,9 @@ public class SmartBuffer {
                         estimatedFill = precipitationContent/1000;
                         */
 
-                    } else {
+                    } else if (nextDischargeStart!=null) {
                         sManager.setRelativeUpdateFrequency(2);
+                        cManager.verifiedCommunication("ARDUINO", 0, 2, 300000);
                         System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "Cancelled discharge scheduled for " + nextDischargeStart.getTime().toString() + " for " + (int)nextDischargeLiters + "L.").toString());
                         nextDischargeStart = null;
                         nextDischargeLiters = 0;
@@ -171,6 +183,7 @@ public class SmartBuffer {
                 }
 
                 if(nextDischargeStart!=null && cal.getTime().after(nextDischargeStart.getTime())) {
+                    cManager.verifiedCommunication("ARDUINO", 0, 2, 500);
                     if(!isEmptying) {
                         System.out.println("EMPYTING: Start emptying.");
                         aManager.update("VALVE_SEWER", true);
