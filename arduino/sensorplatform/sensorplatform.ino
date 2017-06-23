@@ -203,16 +203,16 @@ void loop() {
   liters /= 7.5;
   liters /= 60;
   liters *= 1000;
-  Serial.print("Liters WF_sewer: "); Serial.println(liters, DEC);
+  Serial.print("Liters WF_faucet: "); Serial.println(liters, DEC);
  
   liters = WF_garden_pulses;
   liters /= 7.5;
   liters /= 60;
   liters *= 1000;
-  Serial.print("Liters WF_sewer: "); Serial.println(liters, DEC);
+  Serial.print("Liters WF_garden: "); Serial.println(liters, DEC);
  
 
-  /* 
+ /*
   digitalWrite(VALVE_GARDEN, LOW);
   Serial.println("Set to low");
   delay(2000);

@@ -1,8 +1,6 @@
 package Simulations;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jklei on 6/11/2017.
@@ -33,6 +31,30 @@ public class Rain {
     //08    19.80   60  a
     //09    29.40   60  v
     //10    35.70   45  v
+
+    private void getSimulation(int code) {
+        Map<Date, Double> simulationVals = new TreeMap<Date, Double>();
+        double[] precipitationValues = new double[24];
+        Calendar now = Calendar.getInstance();
+        switch(code) {
+            case 1:
+                precipitationValues = new double[]{5.0, 15.0, 5.0, 10.0, 10.0, 5.0, 15.0, 10.0, 10.0, 5.0, 10.0, 0.0, 0.0, 0.0, 5.0, 5.0, 10.0, 5.0, 15.0, 10.0, 10.0, 5.0, 5.0, 0.0};
+                for(int i = 0; i < 24; i++) {
+                    now.add(Calendar.MINUTE, 5);
+                    simulationVals.put(now.getTime(), precipitationValues[i]);
+                }
+
+                break;
+            case 2:
+
+                break;
+
+            default:
+
+                break;
+        }
+    }
+
     private void calcSimVals(int total, int time, char peak) {
         int[] times;
         if(peak=='v') {
