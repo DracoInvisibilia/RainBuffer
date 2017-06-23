@@ -63,6 +63,7 @@ public class RestApi implements ExternalConnection {
         this.updateInterval = updateInterval;
         this.id = id;
         this.nextUpdate = DateTime.now();
+        this.nextHeartbeat = DateTime.now();
         this.heartbeatinterval = heartbeatInterval;
         try {
             this.waterLevelUrl = new URL(url + "/bufferinformations");
