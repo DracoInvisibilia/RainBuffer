@@ -173,7 +173,8 @@ public class SmartBuffer {
                                 startDischarge.add(Calendar.MINUTE, randomDischarge);
                                 nextDischargeStart = startDischarge;
                                 nextDischargeLiters = dischargeLiters;
-                                cManager.pushDischarge(nextDischargeStart.getTime(),nextDischargeLiters);
+
+                                cManager.pushDischarge(nextDischargeStart.getTime(),Math.max(buffer.getTotal(2), nextDischargeLiters));
                                 System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "New discharge scheduled for " + startDischarge.getTime().toString() + " for " + (int)dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             } else if (dischargeLiters > nextDischargeLiters) {
                                 Calendar nextDischargeEnd = (Calendar) nextDischargeStart.clone();

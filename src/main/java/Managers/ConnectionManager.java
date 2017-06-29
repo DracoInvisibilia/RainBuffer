@@ -40,7 +40,7 @@ public class ConnectionManager {
         ExternalConnection localTonnie = new RestApi(1, "http://localhost/app_ton.php", 1,1);
         ExternalConnection theGreatServer = new RestApi(1, "http://regenbuffer.student.utwente.nl/app.php", 1,1);
         externalConnections = new HashMap<String, ExternalConnection>();
-        externalConnections.put("localTonnie", localTonnie);
+      //  externalConnections.put("localTonnie", localTonnie);
         externalConnections.put("theGreatServer",theGreatServer);
         nextUpdate = localTonnie.getNextUpdate();
         eManager.registerConnectionManager(this);

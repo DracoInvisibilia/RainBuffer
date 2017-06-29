@@ -9,7 +9,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Created by jklei on 5/29/2017.
@@ -26,7 +28,7 @@ public class Buienradar implements Weather {
 
     public Map<Date, Double> getUpdate() {
         Map<Date, Double> predictionData = null;
-        String update = getRaw();
+        String update = "henk";//getRaw();
         if (!update.equals("")) {
             predictionData = parseStoStd(update);
         }
@@ -57,9 +59,17 @@ public class Buienradar implements Weather {
 
 
     private Map<Date, Double> parseStoStd(String update) {
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat sdfDate = new SimpleDateFormat("HH:mm");
+        update = "255|"+ sdfDate.format(now);
+        Calendar next = Calendar.getInstance();
+        for(int i =0; i<20; i++){
+            next.add(Calendar.MINUTE, 5);
+            update += " 255|"+sdfDate.format(next);
+        }
+        System.out.println(update);
         //update = "255|07:20 255|07:25 255|07:30 255|07:35 255|07:40 255|07:45 255|07:50 255|07:55 255|08:00 255|08:05 255|08:10 255|08:15 255|08:20 255|08:25 255|08:30 255|08:35 255|08:40 15|08:45 15|08:50 15|08:55 15|09:00 15|09:05 150|09:10 150|09:15";
         ArrayList<Integer> interTimes = new ArrayList<Integer>();
-        Calendar now = Calendar.getInstance();
         int[] current_time = {now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE)};
         current_time[1] = (current_time[1]+4)/5*5;
         if (current_time[1] >= 60) {
