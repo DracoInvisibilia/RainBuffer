@@ -1,6 +1,7 @@
 import Buffers.Barrel;
 import Buffers.Buffer;
 import Connections.Packets.ArduinoPacket;
+import Event.Event;
 import Event.EventType;
 import Event.Priority;
 import Managers.*;
@@ -17,6 +18,9 @@ import java.util.concurrent.TimeUnit;
 public class SmartBuffer {
     private String name = null;
     private Buffer buffer;
+    private ArrayList<String> activeFlows;
+    private double lastMeasuredWater;
+    private HashMap<String, Double> waterFlowsOut;
     private SensorManager sManager;
     private WeatherManager wManager;
     private ConnectionManager cManager;
@@ -44,6 +48,8 @@ public class SmartBuffer {
         this.roofLength = roofLength;
         sensorData = new HashMap<String, Integer>();
         this.isEmptying = false;
+        this.waterFlowsOut = new HashMap<String, Double>();
+        this.activeFlows = new ArrayList<String>();
     }
 
     public void initialize() {
@@ -81,6 +87,28 @@ public class SmartBuffer {
                     }
                     */
                     sensorData = sVals;
+
+                    double currentWaterLevel = sensorData.get("WATER_LEVEL");
+                    activeFlows = sManager.getActiveFlows();
+                    if(activeFlows.size()>0) {
+                        for(int i = 0; i < activeFlows.size(); i++) {
+                            if(waterFlowsOut.containsKey(activeFlows.get(i))) {
+                                waterFlowsOut.put(activeFlows.get(i), waterFlowsOut.get(activeFlows.get(i)) + ((lastMeasuredWater-currentWaterLevel))/((double)activeFlows.size()));
+                            } else {
+                                waterFlowsOut.put(activeFlows.get(i), ((lastMeasuredWater-currentWaterLevel))/((double)activeFlows.size()));
+                            }
+                        }
+                    } else {
+                        if(currentWaterLevel < lastMeasuredWater) {
+                            eManager.createEvent(Priority.WARNING, EventType.DISCHARGE, "Possible leakage! Buffer is losing water but no outward flows are detected");
+                        }
+                    }
+                    
+                    lastMeasuredWater = currentWaterLevel;
+
+                    if(false) { // Synchronise with db pls Dennis, pls.
+                        waterFlowsOut.clear();
+                    }
                 }
 
                 //System.out.println("Next update (weather): " + wManager.getNextUpdate().toString());
@@ -219,6 +247,8 @@ public class SmartBuffer {
                     //System.out.println("end of server update================================");
 
                 }
+
+
                 TimeUnit.SECONDS.sleep(10);
             }
         } catch (InterruptedException e) {

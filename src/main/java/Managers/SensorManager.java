@@ -2,10 +2,7 @@ package Managers;
 
 import Connections.Packets.Command;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jklei on 5/29/2017.
@@ -17,6 +14,7 @@ public class SensorManager {
     private int updateFrequency_default = 1;
     private int updateFrequency = 1;
     private ConnectionManager cManager;
+    Map<String, Integer> pulledVals;
 
     public SensorManager(ConnectionManager cManager, int updateFrequency) {
         this.updateFrequency = updateFrequency;
@@ -26,11 +24,24 @@ public class SensorManager {
         allSensors = new HashMap<String, Integer>();
         allSensors.put("WATERFLOW_IN", 2);
         allSensors.put("WATER_LEVEL", 1);
+        allSensors.put("WATERFLOW_SEWER", 3);
+        allSensors.put("WATERFLOW_FAUCET", 4);
+        allSensors.put("WATERFLOW_GARDEN", 5);
+        pulledVals = new HashMap<String, Integer>();
     }
 
     public void setRelativeUpdateFrequency(double relative) {
         this.updateFrequency*=relative;
         System.out.println("Updated frequency: " + this.updateFrequency);
+    }
+
+    public ArrayList<String> getActiveFlows() {
+        String[] possibleSensors = new String[]{"WATERFLOW_SEWER","WATERFLOW_FAUCET","WATERFLOW_GARDEN"};
+        ArrayList<String> activeFlows = new ArrayList<String>();
+        for (int i = 0; i < possibleSensors.length; i++) {
+            if (pulledVals.get(possibleSensors[i]) > 0) activeFlows.add(possibleSensors[i]);
+        }
+        return activeFlows;
     }
 
     public void setUpdateFrequency(int newFrequency) {
@@ -42,7 +53,6 @@ public class SensorManager {
     }
 
     public Map<String, Integer> pull() {
-        Map<String, Integer> pulledVals = new HashMap<String, Integer>();
         for (Map.Entry<String, Integer> sensor : allSensors.entrySet()) {
             String sensorName = sensor.getKey();
             int sensorId = sensor.getValue();
