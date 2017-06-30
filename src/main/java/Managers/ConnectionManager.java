@@ -32,7 +32,7 @@ public class ConnectionManager {
             nextUpdate = time;
         }
     }
-
+    HashMap<String, Integer> allSensors;
     public ConnectionManager(boolean init, EventManager eManager) {
         this.eManager = eManager;
         hardwareConnections = new HashMap<String, HardwareConnection>();
@@ -44,6 +44,15 @@ public class ConnectionManager {
         externalConnections.put("theGreatServer",theGreatServer);
         nextUpdate = localTonnie.getNextUpdate();
         eManager.registerConnectionManager(this);
+        allSensors = new HashMap<String, Integer>();
+        allSensors.put("WATERFLOW_IN", 2);
+        allSensors.put("WATER_LEVEL", 1);
+        allSensors.put("WATERFLOW_SEWER", 3);
+        allSensors.put("WATERFLOW_FAUCET", 4);
+        allSensors.put("WATERFLOW_GARDEN", 5);
+
+
+
     }
 
     public int fullCommunication(String name, int command) {
@@ -63,8 +72,9 @@ public class ConnectionManager {
         return responsePkt.getValue();
     }
 
-    public void updateWaterLevel(double d) {
+    public void updateWaterLevel(double d, HashMap<String, Double> waterFlowsOut) {
         Date now = DateTime.now().toDate();
+
         for (Map.Entry<String, ExternalConnection> eec :
                 externalConnections.entrySet()) {
             ExternalConnection ec = eec.getValue();
@@ -73,6 +83,15 @@ public class ConnectionManager {
                 ec.pushWaterLevel(d);
                 System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_SUCCESS, "webserver " + eec.getKey() + " updated waterlevel :" + d));
                 this.updateTime(ec.getNextUpdate());
+                if(waterFlowsOut != null && !waterFlowsOut.isEmpty()){
+                    for (Map.Entry<String,Double> es:waterFlowsOut.entrySet()
+                    ){
+
+                        ec.pushWaterFlow(es.getValue(),allSensors.get(es.getKey()));
+                    }
+
+
+                }
 
             }
             if(ec.getNextHeartbeat().before(now)){

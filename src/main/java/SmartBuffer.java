@@ -106,9 +106,6 @@ public class SmartBuffer {
                     
                     lastMeasuredWater = currentWaterLevel;
 
-                    if(false) { // Synchronise with db pls Dennis, pls.
-                        waterFlowsOut.clear();
-                    }
                 }
 
                 //System.out.println("Next update (weather): " + wManager.getNextUpdate().toString());
@@ -242,7 +239,9 @@ public class SmartBuffer {
                         Integer waterLevel = sensorData.get("WATER_LEVEL");
                         if(waterLevel != null){
                       //      System.out.println("waterlevel not null");
-                            cManager.updateWaterLevel(((double)waterLevel)/1000.0);
+                            cManager.updateWaterLevel(((double)waterLevel)/1000.0,waterFlowsOut);
+                            waterFlowsOut.clear();
+
                         }
                     }
                     //System.out.println("end of server update================================");

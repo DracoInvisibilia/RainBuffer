@@ -12,4 +12,6 @@ public interface ExternalConnection {
     void pushDischarge(Date d, double amount);
     void pushHeartbeat();
     Date getNextHeartbeat();
-}
+    void pushWaterFlow(double d, int valve);
+
+    }

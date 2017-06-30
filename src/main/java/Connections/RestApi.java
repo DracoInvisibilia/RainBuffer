@@ -21,7 +21,7 @@ import Event.Event;
  */
 public class RestApi implements ExternalConnection {
     private int updateInterval, id, heartbeatinterval;
-    private URL waterLevelUrl, errorUrl, dischargeUrl, heartbeatUrl;
+    private URL waterLevelUrl, errorUrl, dischargeUrl, heartbeatUrl, waterflowURL;
     private DateTime nextUpdate;
     private DateTime nextHeartbeat;
 
@@ -56,6 +56,7 @@ public class RestApi implements ExternalConnection {
 
     private String waterLevelString = "{\"buffer_information\": { \"datetime\": %1$s, \"buffer\" : \"%2$d\" , \"waterLevel\": \"%3$f\"}\n" +
             "}";
+    private String waterflowString = "{\"value\" : %1$f, \"valve\" : %1$d }";
 
     private String dischargeString = "{\"datetime\": \"%1$s\" , \"amount\" : \"%2$f\"}";
 
@@ -70,6 +71,8 @@ public class RestApi implements ExternalConnection {
             this.errorUrl = new URL(url + "/events");
             this.dischargeUrl = new URL(url + "/buffers/1/planneds");
             this.heartbeatUrl = new URL(url + "/buffers/1/heartbeats");
+            this.waterflowURL = new URL(url + "/buffers/1/waterflows");
+
         } catch (Exception e) {
 
         }
@@ -214,6 +217,36 @@ public class RestApi implements ExternalConnection {
 
                 System.out.println("end");
 */
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            conn.disconnect();
+            this.updateNextTime();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    @Override
+    public void pushWaterFlow(double d, int valve) {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) waterflowURL.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            Date dt = DateTime.now().toDate();
+            String input = String.format(waterflowString, d, valve);  //"{\"qty\":100,\"name\":\"iPad 4\"}";
+
+            OutputStream os = conn.getOutputStream();
+            os.write(input.getBytes());
+            os.flush();
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
+
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
