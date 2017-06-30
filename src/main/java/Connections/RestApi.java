@@ -176,11 +176,17 @@ public class RestApi implements ExternalConnection {
                 System.out.println("Return message\n" + conn.getContent().toString());
 
                 System.out.println("end");
-
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
+            String line = "";
+            StringBuilder contents = new StringBuilder();
+            while(line != null) {
+                line = br.readLine();
+                contents.append(line);
+            }
+            System.out.println(contents.toString());
 
             conn.disconnect();
             this.updateHeartbeat();
