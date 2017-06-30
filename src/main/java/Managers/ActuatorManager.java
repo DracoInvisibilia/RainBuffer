@@ -19,7 +19,7 @@ public class ActuatorManager {
     public ActuatorManager(ConnectionManager cManager) {
         this.cManager = cManager;
         allActuator = new HashMap<String, Integer>();
-        allActuator.put("VALVE_GARDEN", 33);
+        allActuator.put("VALVE_GARDEN", 8);
         actuatorStates = new HashMap<String, Boolean>();
         actuatorStates.put("VALVE_GARDEN", false);
     }
@@ -28,7 +28,7 @@ public class ActuatorManager {
         System.out.println("Current state: " + valve + ": " + actuatorStates.get(valve));
         System.out.println("State: " + valve + ": " + open);
         if(actuatorStates.get(valve)!=open) {
-            cManager.verifiedCommunication("ARDUINO", 7, Command.SET.getCode(), (open) ? 1 : 0);
+            cManager.verifiedCommunication("ARDUINO", 8, Command.SET.getCode(), (open) ? 1 : 0);
             actuatorStates.put(valve, open);
         }
     }

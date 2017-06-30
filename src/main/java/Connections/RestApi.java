@@ -132,7 +132,7 @@ public class RestApi implements ExternalConnection {
             os.flush();
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
-                System.out.println("Failed : HTTP error code : "
+              /*  System.out.println("Failed : HTTP error code : "
                         + conn.getResponseCode());
                 System.out.println("original message\n" + input);
 
@@ -140,7 +140,7 @@ public class RestApi implements ExternalConnection {
                 System.out.println("Return message\n" + conn.getContent().toString());
 
                 System.out.println("end");
-
+*/
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -168,7 +168,7 @@ public class RestApi implements ExternalConnection {
             os.flush();
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT ||conn.getResponseCode() != HttpURLConnection.HTTP_ACCEPTED) {
-                System.out.println("Failed : HTTP error code : "
+  /*              System.out.println("Failed : HTTP error code : "
                         + conn.getResponseCode());
                 System.out.println("original message\n" + input);
 
@@ -176,6 +176,7 @@ public class RestApi implements ExternalConnection {
                 System.out.println("Return message\n" + conn.getContent().toString());
 
                 System.out.println("end");
+*/
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -211,7 +212,7 @@ public class RestApi implements ExternalConnection {
             os.flush();
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
-                System.out.println("Failed : HTTP error code : "
+  /*              System.out.println("Failed : HTTP error code : "
                         + conn.getResponseCode());
                 System.out.println("original message\n" + input);
 
@@ -219,7 +220,7 @@ public class RestApi implements ExternalConnection {
                 System.out.println("Return message\n" + conn.getContent().toString());
 
                 System.out.println("end");
-
+*/
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader(

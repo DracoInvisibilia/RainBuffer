@@ -329,7 +329,7 @@ void receiveData(int byteCount){
             }
           break;
 
-      case WATERGATE_SEWER:
+      case WATERGATE_GARDEN:
         switch(pkt_command) {
           case SET:
             if(pkt_value==1) {
