@@ -146,7 +146,7 @@ public class SmartBuffer {
                                 nextDischargeStart = startDischarge;
                                 nextDischargeLiters = dischargeLiters;
 
-                                cManager.pushDischarge(nextDischargeStart.getTime(),Math.max(buffer.getTotal(2), nextDischargeLiters));
+                                cManager.pushDischarge(nextDischargeStart.getTime(),Math.min(buffer.getTotal(2), nextDischargeLiters));
                                 System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.DISCHARGE, "New discharge scheduled for " + startDischarge.getTime().toString() + " for " + (int)dischargeLiters + "L. (Estimated time: " + dischargeTime + " min)").toString());
                             } else if (dischargeLiters > nextDischargeLiters) {
                                 Calendar nextDischargeEnd = (Calendar) nextDischargeStart.clone();
@@ -186,12 +186,12 @@ public class SmartBuffer {
                     cManager.verifiedCommunication("ARDUINO", 0, 2, 500);
                     if(!isEmptying) {
                         System.out.println("EMPYTING: Start emptying.");
-                        aManager.update("VALVE_SEWER", true);
+                        aManager.update("VALVE_GARDEN", true);
                         isEmptying=true;
                     } else {
                         if(buffer.getTotal(2)-nextDischargeLiters >= buffer.getContent(sensorData.get("WATER_LEVEL"), 2)) {
                             System.out.println("EMPTYING: Stop emptying.");
-                            aManager.update("VALVE_SEWER", false);
+                            aManager.update("VALVE_GARDEN", false);
                             isEmptying=false;
                             nextDischargeStart = null;
                             nextDischargeLiters = 0;

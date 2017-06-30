@@ -61,11 +61,12 @@ public class Buienradar implements Weather {
     private Map<Date, Double> parseStoStd(String update) {
         Calendar now = Calendar.getInstance();
         SimpleDateFormat sdfDate = new SimpleDateFormat("HH:mm");
-        update = "255|"+ sdfDate.format(now);
         Calendar next = Calendar.getInstance();
+        next.add(Calendar.MINUTE, 1);
+        update = "255|"+ sdfDate.format(next.getTime());
         for(int i =0; i<20; i++){
             next.add(Calendar.MINUTE, 5);
-            update += " 255|"+sdfDate.format(next);
+            update += " 255|"+sdfDate.format(next.getTime());
         }
         System.out.println(update);
         //update = "255|07:20 255|07:25 255|07:30 255|07:35 255|07:40 255|07:45 255|07:50 255|07:55 255|08:00 255|08:05 255|08:10 255|08:15 255|08:20 255|08:25 255|08:30 255|08:35 255|08:40 15|08:45 15|08:50 15|08:55 15|09:00 15|09:05 150|09:10 150|09:15";
