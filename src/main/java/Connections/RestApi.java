@@ -56,7 +56,7 @@ public class RestApi implements ExternalConnection {
 
     private String waterLevelString = "{\"buffer_information\": { \"datetime\": %1$s, \"buffer\" : \"%2$d\" , \"waterLevel\": \"%3$f\"}\n" +
             "}";
-    private String waterflowString = "{\"value\" : %1$f, \"valve\" : %1$d }";
+    private String waterflowString = "{\"value\" : %1$f, \"valve\" : %2$d }";
 
     private String dischargeString = "{\"datetime\": \"%1$s\" , \"amount\" : \"%2$f\"}";
 
@@ -185,10 +185,10 @@ public class RestApi implements ExternalConnection {
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
             String line = "";
-            StringBuilder contents = new StringBuilder();
+            StringBuilder contents = new StringBuilder("RECEIVED FROM SERVER: ");
             while(line != null) {
                 line = br.readLine();
-                contents.append(line);
+                if(line!=null)contents.append(line);
             }
             System.out.println(contents.toString());
 

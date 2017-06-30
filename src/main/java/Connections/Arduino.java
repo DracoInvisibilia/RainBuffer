@@ -7,6 +7,7 @@ import com.pi4j.io.i2c.I2CFactory;
 import com.pi4j.wiringpi.Gpio;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -97,9 +98,12 @@ public class Arduino implements HardwareConnection {
         byte[] response_b = new byte[10];
         try {
             ardDev.read(response_b, 0, 10);
+            //System.out.println("Byte array: "+ Arrays.toString(response_b));
+            //System.out.println("Value shifting: " + (response_b[2] << 24 | (response_b[3] & 0xFF) << 16 | (response_b[4] & 0xFF) << 8 | (response_b[5] & 0xFF)));
             responsePkt.setSensorId(response_b[0]);
             responsePkt.setCommand(response_b[1]);
             responsePkt.setValue(response_b[2] << 24 | (response_b[3] & 0xFF) << 16 | (response_b[4] & 0xFF) << 8 | (response_b[5] & 0xFF));
+            //System.out.println("Get response value: " + responsePkt.getValue());
             responsePkt.setError(response_b[6] << 24 | (response_b[7] & 0xFF) << 16 | (response_b[8] & 0xFF) << 8 | (response_b[9] & 0xFF));
             //System.out.println("Received packet: " + responsePkt.toString());
         } catch (IOException e) {

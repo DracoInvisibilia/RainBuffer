@@ -5,7 +5,7 @@
 #define WATER_LEVEL 1
 #define WATERFLOW_IN 2
 #define WATERFLOW_SEWER 3
-#define WATERFLOW_FACUET 4
+#define WATERFLOW_FAUCET 4
 #define WATERFLOW_GARDEN 5
 #define TEMPERATURE 6
 #define WATERGATE_SEWER 7
@@ -59,10 +59,10 @@ int32_t toSend = -1;
 byte transmit_packet[10];
 
 //Sensor stuff
-int32_t WF_in_pulses = 0;
-int32_t WF_faucet_pulses = 0;
-int32_t WF_sewer_pulses = 0;
-int32_t WF_garden_pulses = 0;
+int32_t WF_in_pulses = 50;
+int32_t WF_faucet_pulses = 50;
+int32_t WF_sewer_pulses = 50;
+int32_t WF_garden_pulses = 50;
 
 long US_time, US_dist;
 int32_t MA_BUF[MA_WINDOW];
@@ -278,6 +278,7 @@ void receiveData(int byteCount){
             liters *= 1000;
             pkt_value = ((int) liters);
             if(liters<0 || liters>999) pkt_error = SENSOR_FAILURE;
+            WF_in_pulses = 50;
             break;
           case SET:
             if(pkt_value>999 || pkt_value<0) {
@@ -286,6 +287,99 @@ void receiveData(int byteCount){
               WF_in_pulses = pkt_value/1000;
               WF_in_pulses *= 60;
               WF_in_pulses *= 7.5;
+            }
+            break;
+          case RESET:
+            WF_in_pulses = 0;
+            if(WF_in_pulses!=0) pkt_error = COMMAND_FAILURE;
+            break;
+          default:
+            pkt_error = INVALID_COMMAND;
+            break;
+        }
+        break;
+
+        case WATERFLOW_GARDEN:
+        switch(pkt_command) {
+          case GET:
+            Serial.print("Waterflow_garden requested. Value: "); Serial.println(WF_in_pulses);
+            liters = WF_faucet_pulses;
+            liters /= 7.5;
+            liters /= 60;
+            liters *= 1000;
+            pkt_value = ((int) liters);
+            if(liters<0 || liters>999) pkt_error = SENSOR_FAILURE;
+            WF_faucet_pulses = 50;
+            break;
+          case SET:
+            if(pkt_value>999 || pkt_value<0) {
+              pkt_error = INVALID_VALUE;
+            } else {
+              WF_garden_pulses = pkt_value/1000;
+              WF_garden_pulses *= 60;
+              WF_garden_pulses *= 7.5;
+            }
+            break;
+          case RESET:
+            WF_garden_pulses = 0;
+            if(WF_garden_pulses!=0) pkt_error = COMMAND_FAILURE;
+            break;
+          default:
+            pkt_error = INVALID_COMMAND;
+            break;
+        }
+        break;
+
+        case WATERFLOW_FAUCET:
+        switch(pkt_command) {
+          case GET:
+            Serial.print("Waterflow_faucet requested. Value: "); Serial.println(WF_in_pulses);
+            liters = WF_faucet_pulses;
+            liters /= 7.5;
+            liters /= 60;
+            liters *= 1000;
+            pkt_value = ((int) liters);
+            if(liters<0 || liters>999) pkt_error = SENSOR_FAILURE;
+            WF_faucet_pulses = 50;
+            break;
+          case SET:
+            if(pkt_value>999 || pkt_value<0) {
+              pkt_error = INVALID_VALUE;
+            } else {
+              WF_faucet_pulses = pkt_value/1000;
+              WF_faucet_pulses *= 60;
+              WF_faucet_pulses *= 7.5;
+            }
+            break;
+          case RESET:
+            WF_faucet_pulses = 0;
+            if(WF_faucet_pulses!=0) pkt_error = COMMAND_FAILURE;
+            break;
+          default:
+            pkt_error = INVALID_COMMAND;
+            break;
+        }
+        break;
+
+        case WATERFLOW_SEWER:
+        switch(pkt_command) {
+          case GET:
+            Serial.print("Waterflow_sewer requested. Value: "); Serial.println(WF_in_pulses);
+            liters = WF_sewer_pulses;
+            liters /= 7.5;
+            liters /= 60;
+            liters *= 1000;
+            pkt_value = ((int) liters);
+            if(liters<0 || liters>999) pkt_error = SENSOR_FAILURE;
+            WF_sewer_pulses = 50;
+            break;
+          case SET:
+            if(pkt_value>999 || pkt_value<0) {
+              pkt_error = INVALID_VALUE;
+            } else {
+              WF_sewer_pulses = pkt_value/1000;
+              WF_sewer_pulses *= 60;
+              WF_sewer_pulses *= 7.5;
             }
             break;
           case RESET:

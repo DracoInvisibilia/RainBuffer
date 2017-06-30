@@ -12,11 +12,8 @@ import Event.EventType;
 import Event.Priority;
 import org.joda.time.DateTime;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
+// 1=SEWER(WATERGATE_SEWER),2=GARDEN(WATERGATE_GARDEN)
 /**
  * Created by jklei on 5/29/2017.
  */
@@ -25,6 +22,7 @@ public class ConnectionManager {
     EventManager eManager;
     Map<String, ExternalConnection> externalConnections;
     Date nextUpdate;
+    private String heartbeatValue;
 
     private void updateTime(Date time) {
         Calendar cal = Calendar.getInstance();
@@ -32,6 +30,11 @@ public class ConnectionManager {
             nextUpdate = time;
         }
     }
+
+    public String getHBval() {
+        return (heartbeatValue=="") ? null : heartbeatValue;
+    }
+
     HashMap<String, Integer> allSensors;
     public ConnectionManager(boolean init, EventManager eManager) {
         this.eManager = eManager;
@@ -64,6 +67,7 @@ public class ConnectionManager {
         ArduinoPacket transmitPkt = new ArduinoPacket(sensor, command, val);
         ArduinoPacket responsePkt = hardwareConnections.get(name).receivePacket();
         hardwareConnections.get(name).sendPacket(transmitPkt);
+        //System.out.println(responsePkt.toString());
         if (responsePkt.isAnswerTo(transmitPkt) && !responsePkt.hasError()) {
             System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.SENSOR_SUCCESS, "Got answer to question: SID=" + sensor + ",COMMAND: " + Command.getCommand(command) + ", namely: " + responsePkt.getValue()).toString());
         } else if (responsePkt.hasError()) {
@@ -83,7 +87,9 @@ public class ConnectionManager {
                 ec.pushWaterLevel(d);
                 System.out.println(eManager.createEvent(Priority.NOTIFICATION, EventType.UPDATE_SUCCESS, "webserver " + eec.getKey() + " updated waterlevel :" + d));
                 this.updateTime(ec.getNextUpdate());
+                System.out.println("kek_b4");
                 if(waterFlowsOut != null && !waterFlowsOut.isEmpty()){
+                    System.out.println("kek_in");
                     for (Map.Entry<String,Double> es:waterFlowsOut.entrySet()
                     ){
 

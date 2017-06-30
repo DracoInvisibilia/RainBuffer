@@ -19,9 +19,11 @@ public class ActuatorManager {
     public ActuatorManager(ConnectionManager cManager) {
         this.cManager = cManager;
         allActuator = new HashMap<String, Integer>();
-        allActuator.put("VALVE_GARDEN", 8);
+        allActuator.put("WATERGATE_SEWER", 7);
+        allActuator.put("WATERGATE_GARDEN", 8);
         actuatorStates = new HashMap<String, Boolean>();
-        actuatorStates.put("VALVE_GARDEN", false);
+        actuatorStates.put("WATERGATE_SEWER", false);
+        actuatorStates.put("WATERGATE_GARDEN", false);
     }
 
     public void update(String valve, boolean open) {
