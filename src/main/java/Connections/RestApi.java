@@ -21,7 +21,7 @@ import Event.Event;
  */
 public class RestApi implements ExternalConnection {
     private int updateInterval, id, heartbeatinterval;
-    private URL waterLevelUrl, errorUrl, dischargeUrl, heartbeatUrl, waterflowURL;
+    private URL waterLevelUrl, errorUrl, dischargeUrl, heartbeatUrl, waterflowURL, futureURL;
     private DateTime nextUpdate;
     private DateTime nextHeartbeat;
 
@@ -60,6 +60,9 @@ public class RestApi implements ExternalConnection {
 
     private String dischargeString = "{\"datetime\": \"%1$s\" , \"amount\" : \"%2$f\"}";
 
+    private String futureString = "{\"value\": \"%1$d\"}";
+
+
     public RestApi(int id, String url, int updateInterval, int heartbeatInterval) {
         this.updateInterval = updateInterval;
         this.id = id;
@@ -72,7 +75,7 @@ public class RestApi implements ExternalConnection {
             this.dischargeUrl = new URL(url + "/buffers/1/planneds");
             this.heartbeatUrl = new URL(url + "/buffers/1/heartbeats");
             this.waterflowURL = new URL(url + "/buffers/1/waterflows");
-
+            this.futureURL = new URL(url + "/buffers/1/waterflows");
         } catch (Exception e) {
 
         }
