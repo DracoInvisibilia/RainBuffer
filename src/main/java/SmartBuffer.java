@@ -37,6 +37,9 @@ public class SmartBuffer {
     private Calendar nextDischargeStart;
     private double nextDischargeLiters;
     private boolean isEmptying;
+    TreeMap<String, Integer> manualDischarges;
+    private double manualDischargeStart;
+    private boolean currentlyManualDischarging;
 
 
     public SmartBuffer(String name, double lat, double lon, int roofWidth, int roofLength) {
@@ -50,6 +53,9 @@ public class SmartBuffer {
         this.isEmptying = false;
         this.waterFlowsOut = new HashMap<String, Double>();
         this.activeFlows = new ArrayList<String>();
+        this.manualDischarges = new TreeMap<String, Integer>();
+        this.manualDischargeStart = 0;
+        this.currentlyManualDischarging = false;
     }
 
     public void initialize() {
@@ -91,6 +97,9 @@ public class SmartBuffer {
                     double currentWaterLevel = sensorData.get("WATER_LEVEL");
                     activeFlows = sManager.getActiveFlows();
                     if(activeFlows.size()>0) {
+                        System.out.println("Inside activeFlows.size()");
+                        System.out.println(activeFlows);
+                        System.out.println("lastMeasured: " + lastMeasuredWater + ", currentWaterLevel: " + currentWaterLevel);
                         for(int i = 0; i < activeFlows.size(); i++) {
                             if(waterFlowsOut.containsKey(activeFlows.get(i))) {
                                 waterFlowsOut.put(activeFlows.get(i), waterFlowsOut.get(activeFlows.get(i)) + ((lastMeasuredWater-currentWaterLevel))/((double)activeFlows.size()));
@@ -98,6 +107,7 @@ public class SmartBuffer {
                                 waterFlowsOut.put(activeFlows.get(i), ((lastMeasuredWater-currentWaterLevel))/((double)activeFlows.size()));
                             }
                         }
+                        System.out.println(waterFlowsOut);
                     } else {
                         if(currentWaterLevel < lastMeasuredWater) {
                             eManager.createEvent(Priority.WARNING, EventType.DISCHARGE, "Possible leakage! Buffer is losing water but no outward flows are detected");
@@ -211,12 +221,12 @@ public class SmartBuffer {
                     cManager.verifiedCommunication("ARDUINO", 0, 2, 500);
                     if(!isEmptying) {
                         System.out.println("EMPYTING: Start emptying.");
-                        aManager.update("VALVE_GARDEN", true);
+                        //aManager.update("VALVE_GARDEN", true);
                         isEmptying=true;
                     } else {
                         if(buffer.getTotal(2)-nextDischargeLiters >= buffer.getContent(sensorData.get("WATER_LEVEL"), 2)) {
                             System.out.println("EMPTYING: Stop emptying.");
-                            aManager.update("VALVE_GARDEN", false);
+                            //aManager.update("VALVE_GARDEN", false);
                             isEmptying=false;
                             nextDischargeStart = null;
                             nextDischargeLiters = 0;
@@ -234,11 +244,11 @@ public class SmartBuffer {
                 */
                 if(cManager!=null && cal.getTime().after(cManager.getNextUpdate())) {
                     //System.out.println("updating server=====================================");
-                    if(sensorData != null){
-                    //    System.out.println("sensordata not null");
+                    if(sensorData != null) {
+                        System.out.println("sensordata not null");
                         Integer waterLevel = sensorData.get("WATER_LEVEL");
                         if(waterLevel != null){
-                      //      System.out.println("waterlevel not null");
+                            System.out.println("waterlevel not null");
                             cManager.updateWaterLevel(((double)waterLevel)/1000.0,waterFlowsOut);
                             waterFlowsOut.clear();
 
@@ -246,6 +256,35 @@ public class SmartBuffer {
                     }
                     //System.out.println("end of server update================================");
 
+                }
+
+                if(true || cManager.getHBval()!=null) {
+
+                    //String hbVal = cManager.getHBval();
+                    String hbVal = "{\"1\":22,\"2\":1337}";
+                    hbVal = hbVal.replace("\"1\"", "WATERGATE_SEWER").replace("\"2\"", "WATERGATE_GARDEN").replace("{","").replace("}", "");
+                    System.out.println("hbVal: " + hbVal);
+                    String[] splitted = hbVal.split(",");
+                    for(int i = 0; i < splitted.length; i++) {
+                        manualDischarges.put(splitted[i].split(":")[0], Integer.parseInt(splitted[i].split(":")[1]));
+                    }
+                }
+
+                if(!manualDischarges.isEmpty()) {
+                    System.out.println(manualDischarges);
+                    double currentWaterLevel = sensorData.get("WATER_LEVEL");
+                    if(!currentlyManualDischarging) {
+                        System.out.println("Setting currently manual discharing: " + manualDischarges.firstKey());
+                        // open klep
+                        currentlyManualDischarging = true;
+                        manualDischargeStart = currentWaterLevel;
+                        aManager.update(manualDischarges.firstKey(), true);
+                    } else if(manualDischargeStart-currentWaterLevel>=manualDischarges.get(manualDischarges.firstKey())) {
+                        //dicht klep
+                        currentlyManualDischarging = false;
+                        aManager.update(manualDischarges.firstKey(), false);
+                        manualDischarges.remove(manualDischarges.firstKey());
+                    }
                 }
 
 
